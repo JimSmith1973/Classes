@@ -5,14 +5,14 @@
 Template::Template()
 {
 	// Initialise member variables
-	::ZeroMemory( &m_hWnd, sizeof( m_hWnd ) );
+	ZeroMemory( &m_hWnd, sizeof( m_hWnd ) );
 
 } // End of function Template::Template
  
 Template::~Template()
 {
 	// Clear member variables
-	::ZeroMemory( &m_hWnd, sizeof( m_hWnd ) );
+	ZeroMemory( &m_hWnd, sizeof( m_hWnd ) );
 
 } // End of function Template::~Template
 
