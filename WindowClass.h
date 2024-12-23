@@ -39,7 +39,23 @@ public:
 
 	BOOL Create( LPCTSTR lpszClassName, HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowTitle = WINDOW_CLASS_DEFAULT_TITLE, DWORD dwExStyle = WINDOW_CLASS_DEFAULT_EXTENDED_STYLE, DWORD dwStyle = WINDOW_CLASS_DEFAULT_STYLE, HMENU hMenu = WINDOW_CLASS_DEFAULT_MENU, int nLeft = WINDOW_CLASS_DEFAULT_LEFT, int nTop = WINDOW_CLASS_DEFAULT_TOP, int nWidth = WINDOW_CLASS_DEFAULT_WIDTH, int nHeight = WINDOW_CLASS_DEFAULT_HEIGHT, LPVOID lpParam = WINDOW_CLASS_DEFAULT_PARAM );
 
+	LRESULT DefaultProcedure( UINT uMessage, WPARAM wParam, LPARAM lParam );
+
+	BOOL Destroy();
+
+	BOOL GetClientRect( LPRECT lpRect );
+
 	HMENU GetSystemMenu( BOOL bRevert = FALSE );
+
+	BOOL GetWindowRect( LPRECT lpRect );
+
+	BOOL Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint = TRUE );
+
+	LRESULT SendMessage( UINT uMessage, WPARAM wParam, LPARAM lParam );
+
+	HWND SetFocus();
+
+	void SetFont( HFONT hFont );
 
 	BOOL Show( int nCmdShow );
 

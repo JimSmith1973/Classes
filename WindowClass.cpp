@@ -88,12 +88,68 @@ BOOL Window::Create( LPCTSTR lpszClassName, HWND hWndParent, HINSTANCE hInstance
 
 } // End of function Window::Create
 
+LRESULT Window::DefaultProcedure( UINT uMessage, WPARAM wParam, LPARAM lParam )
+{
+	// Call default window procedure
+	return ::DefWindowProc( m_hWnd, uMessage, wParam, lParam );
+
+} // End of function Window::DefaultProcedure
+
+BOOL Window::Destroy()
+{
+	// Destroy window
+	return ::DestroyWindow( m_hWnd );
+
+} // End of function Window::Destroy
+
+BOOL Window::GetClientRect( LPRECT lpRect )
+{
+	// Get client rect
+	return ::GetClientRect( m_hWnd, lpRect );
+
+} // End of function Window::GetClientRect
+
 HMENU Window::GetSystemMenu( BOOL bRevert )
 {
 	// Get system menu
 	return ::GetSystemMenu( m_hWnd, bRevert );
 
 } // End of function Window::GetSystemMenu
+
+BOOL Window::GetWindowRect( LPRECT lpRect )
+{
+	// Get window rect
+	return ::GetWindowRect( m_hWnd, lpRect );
+
+} // End of function Window::GetWindowRect
+
+BOOL Window::Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint )
+{
+	// Move window
+	return ::MoveWindow( m_hWnd, nLeft, nTop, nWidth, nHeight, bRepaint );
+
+} // End of function Window::Move
+
+LRESULT Window::SendMessage( UINT uMessage, WPARAM wParam, LPARAM lParam )
+{
+	 // Send message
+	 return ::SendMessage( m_hWnd, uMessage, ( WPARAM )wParam, ( LPARAM )lParam );
+
+} // End of function Window::SendMessage
+
+HWND Window::SetFocus()
+{
+	// Focus on window
+	return ::SetFocus( m_hWnd );
+
+} // End of function Window::SetFocus
+
+void Window::SetFont( HFONT hFont )
+{
+	 // Set font
+	 ::SendMessage( m_hWnd, WM_SETFONT, ( WPARAM )hFont, ( LPARAM )TRUE );
+
+} // End of function Window::SetFont
 
 BOOL Window::Show( int nCmdShow )
 {
