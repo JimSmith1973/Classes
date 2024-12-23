@@ -1,0 +1,39 @@
+// StatusBarWindowClass.h
+
+#pragma once
+
+#include <windows.h>
+#include <commctrl.h>
+
+#include <windows.h>
+
+#include "WindowClass.h"
+
+#define STATUS_BAR_WINDOW_CLASS_NAME											STATUSCLASSNAME
+#define STATUS_BAR_WINDOW_CLASS_DEFAULT_TEXT									NULL
+#define STATUS_BAR_WINDOW_CLASS_DEFAULT_MENU									NULL
+#define STATUS_BAR_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE							0
+#define STATUS_BAR_WINDOW_CLASS_DEFAULT_STYLE									( WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP )
+#define STATUS_BAR_WINDOW_CLASS_DEFAULT_LEFT									CW_USEDEFAULT
+#define STATUS_BAR_WINDOW_CLASS_DEFAULT_TOP										CW_USEDEFAULT
+#define STATUS_BAR_WINDOW_CLASS_DEFAULT_WIDTH									CW_USEDEFAULT
+#define STATUS_BAR_WINDOW_CLASS_DEFAULT_HEIGHT									CW_USEDEFAULT
+#define STATUS_BAR_WINDOW_CLASS_DEFAULT_LP_PARAM								NULL
+
+class StatusBarWindow : public Window
+{
+public:
+	StatusBarWindow();
+	~StatusBarWindow();
+
+	BOOL Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText = STATUS_BAR_WINDOW_CLASS_DEFAULT_TEXT, DWORD dwExStyle = STATUS_BAR_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE, DWORD dwStyle = STATUS_BAR_WINDOW_CLASS_DEFAULT_STYLE, HMENU hMenu = STATUS_BAR_WINDOW_CLASS_DEFAULT_MENU, int nLeft = STATUS_BAR_WINDOW_CLASS_DEFAULT_LEFT, int nTop = STATUS_BAR_WINDOW_CLASS_DEFAULT_TOP, int nWidth = STATUS_BAR_WINDOW_CLASS_DEFAULT_WIDTH, int nHeight = STATUS_BAR_WINDOW_CLASS_DEFAULT_HEIGHT, LPVOID lpParam = STATUS_BAR_WINDOW_CLASS_DEFAULT_LP_PARAM );
+
+	BOOL Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint = TRUE );
+
+	BOOL SetText( LPCTSTR lpszStatusText );
+
+	LRESULT Size();
+
+protected:
+
+}; // End of class StatusBarWindow

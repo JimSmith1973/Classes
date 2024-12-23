@@ -1,0 +1,37 @@
+// TemplateWindowClass.h
+
+#pragma once
+
+#include <windows.h>
+#include <commctrl.h>
+
+#include <windows.h>
+
+#include "WindowClass.h"
+
+#define TEMPLATE_WINDOW_CLASS_NAME												WC_TREEVIEW
+#define TEMPLATE_WINDOW_CLASS_DEFAULT_TEXT										NULL
+#define TEMPLATE_WINDOW_CLASS_DEFAULT_MENU										NULL
+#define TEMPLATE_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE							0
+#define TEMPLATE_WINDOW_CLASS_DEFAULT_STYLE										( WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_HASLINES | TVS_HASBUTTONS | TVS_LINESATROOT )
+#define TEMPLATE_WINDOW_CLASS_DEFAULT_LEFT										CW_USEDEFAULT
+#define TEMPLATE_WINDOW_CLASS_DEFAULT_TOP										CW_USEDEFAULT
+#define TEMPLATE_WINDOW_CLASS_DEFAULT_WIDTH										CW_USEDEFAULT
+#define TEMPLATE_WINDOW_CLASS_DEFAULT_HEIGHT									CW_USEDEFAULT
+#define TEMPLATE_WINDOW_CLASS_DEFAULT_LP_PARAM									NULL
+
+class TemplateWindow : public Window
+{
+public:
+	TemplateWindow();
+	~TemplateWindow();
+
+	BOOL Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText = TEMPLATE_WINDOW_CLASS_DEFAULT_TEXT, DWORD dwExStyle = TEMPLATE_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE, DWORD dwStyle = TEMPLATE_WINDOW_CLASS_DEFAULT_STYLE, HMENU hMenu = TEMPLATE_WINDOW_CLASS_DEFAULT_MENU, int nLeft = TEMPLATE_WINDOW_CLASS_DEFAULT_LEFT, int nTop = TEMPLATE_WINDOW_CLASS_DEFAULT_TOP, int nWidth = TEMPLATE_WINDOW_CLASS_DEFAULT_WIDTH, int nHeight = TEMPLATE_WINDOW_CLASS_DEFAULT_HEIGHT, LPVOID lpParam = TEMPLATE_WINDOW_CLASS_DEFAULT_LP_PARAM );
+
+	BOOL HandleNotifyMessage( WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( LPTSTR ) = NULL );
+
+	BOOL Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint = TRUE );
+
+protected:
+
+}; // End of class TemplateWindow
