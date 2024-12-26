@@ -7,6 +7,10 @@
 #include "..\Common\Ascii.h"
 #include "..\Common\Common.h"
 
+#define MENU_CLASS_SYSTEM_MENU_SEPARATOR_ITEM_POSITION							5
+#define MENU_CLASS_SYSTEM_MENU_ABOUT_ITEM_POSITION								6
+#define MENU_CLASS_SYSTEM_MENU_ABOUT_ITEM_TEXT									"About"
+
 class Menu
 {
 public:
