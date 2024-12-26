@@ -7,10 +7,6 @@
 #include "..\Common\Ascii.h"
 #include "..\Common\Common.h"
 
-#define MAIN_WINDOW_EXTENDED_STYLE												( WS_EX_WINDOWEDGE | WS_EX_ACCEPTFILES )
-#define MAIN_WINDOW_STYLE														WS_OVERLAPPEDWINDOW
-#define MAIN_WINDOW_TEXT														"Template"
-
 #define WINDOW_CLASS_DEFAULT_TITLE												NULL
 #define WINDOW_CLASS_DEFAULT_EXTENDED_STYLE										( WS_EX_WINDOWEDGE | WS_EX_ACCEPTFILES )
 #define WINDOW_CLASS_DEFAULT_STYLE												WS_OVERLAPPEDWINDOW
