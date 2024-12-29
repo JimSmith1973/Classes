@@ -102,6 +102,13 @@ BOOL Window::Destroy()
 
 } // End of function Window::Destroy
 
+BOOL Window::Enable( BOOL bEnable )
+{
+	// Enable window
+	return ::EnableWindow( m_hWnd, bEnable );
+
+} // End of function Window::Enable
+
 BOOL Window::GetClientRect( LPRECT lpRect )
 {
 	// Get client rect
@@ -115,6 +122,20 @@ HMENU Window::GetSystemMenu( BOOL bRevert )
 	return ::GetSystemMenu( m_hWnd, bRevert );
 
 } // End of function Window::GetSystemMenu
+
+int Window::GetText( LPTSTR lpszText, DWORD dwMaximumTextLength )
+{
+	// Get window text
+	return ::GetWindowText( m_hWnd, lpszText, dwMaximumTextLength );
+
+} // End of function Window::GetText
+
+DWORD Window::GetTextLength()
+{
+	// Get window text length
+	return ::GetWindowTextLength( m_hWnd );
+
+} // End of function Window::GetTextLength
 
 BOOL Window::GetWindowRect( LPRECT lpRect )
 {
@@ -143,6 +164,13 @@ HWND Window::SetFocus()
 	return ::SetFocus( m_hWnd );
 
 } // End of function Window::SetFocus
+
+BOOL Window::SetText( LPCTSTR lpszText )
+{
+	// Set window text
+	return ::SetWindowText( m_hWnd, lpszText );
+
+} // End of function Window::SetText
 
 void Window::SetFont( HFONT hFont )
 {

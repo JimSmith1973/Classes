@@ -42,9 +42,15 @@ public:
 
 	BOOL Destroy();
 
+	BOOL Enable( BOOL bEnable );
+
 	BOOL GetClientRect( LPRECT lpRect );
 
 	HMENU GetSystemMenu( BOOL bRevert = FALSE );
+
+	int GetText( LPTSTR lpszText, DWORD dwMaximumTextLength = STRING_LENGTH );
+
+	DWORD GetTextLength();
 
 	BOOL GetWindowRect( LPRECT lpRect );
 
@@ -55,6 +61,8 @@ public:
 	HWND SetFocus();
 
 	void SetFont( HFONT hFont );
+
+	BOOL SetText( LPCTSTR lpszText );
 
 	BOOL Show( int nCmdShow );
 
