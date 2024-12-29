@@ -157,28 +157,109 @@ int ListViewWindow::GetSelectedItem()
 
 } // End of function ListViewWindow::GetSelectedItem
 
-BOOL ListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPTSTR ) )
+BOOL ListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPTSTR lpszItemText ), PFNLVCOMPARE lpCompareFunction )
 {
 	BOOL bResult = FALSE;
 
-	LPNMHDR lpNmHdr;
+	LPNMLISTVIEW lpNmListView;
 
-	// Store notify message handler
-	lpNmHdr = ( LPNMHDR )lParam;
+	// Get list view notify message information
+	lpNmListView = ( LPNMLISTVIEW )lParam;
 
-	// Select notify message
-	switch( lpNmHdr->code )
+	// Select list view window notification code
+	switch( lpNmListView->hdr.code )
 	{
-		case TVN_ITEMEXPANDING:
+		case LVN_COLUMNCLICK:
 		{
-			// An item expanding notify message
+			// A column click notify message
+
+			// Sort list view window
+			::SendMessage( m_hWnd, LVM_SORTITEMSEX, ( WPARAM )( LPARAM )( lpNmListView->iSubItem ), ( LPARAM )lpCompareFunction );
 
 			// Break out of switch
 			break;
 
-		} // End of an item expanding notify message
+		} // End of a column click notify message
+		case LVN_ITEMCHANGED:
+		{
+			// A list view window item changed notification code
 
-	}; // End of selection for notify message
+			// See if selection has changed
+			if( ( lpNmListView->uNewState ^ lpNmListView->uOldState ) & LVIS_SELECTED )
+			{
+				// Selection has changed
+
+				// Allocate string memory
+				LPTSTR lpszItemText = new char[ STRING_LENGTH + sizeof( char ) ];
+
+				// Get item text
+				if( GetItemText( lpNmListView->iItem, lpNmListView->iSubItem, lpszItemText ) )
+				{
+					// Successfully got item text
+
+					// Call selection changed function
+					( *lpSelectionChangedFunction )( lpszItemText );
+
+					// Update return value
+					bResult = TRUE;
+
+				} // End of successfully got item text
+
+				// Free string memory
+				delete [] lpszItemText;
+
+			} // End of selection has changed
+
+			// Break out of switch
+			break;
+
+		} // End of a list view window item changed notification code
+		case NM_DBLCLK:
+		{
+			// A double click notification code
+
+			// Ensure that an item is selected
+			if( lpNmListView->iItem >= 0 )
+			{
+				// An item is selected
+
+				// Allocate string memory
+				LPTSTR lpszItemText = new char[ STRING_LENGTH + sizeof( char ) ];
+
+				// Get item text
+				if( GetItemText( lpNmListView->iItem, lpNmListView->iSubItem, lpszItemText ) )
+				{
+					// Successfully got item text
+
+					// Call double click function
+					( *lpDoubleClickFunction )( lpszItemText );
+
+					// Update return value
+					bResult = TRUE;
+
+				} // End of successfully got item text
+
+				// Free string memory
+				delete [] lpszItemText;
+
+			} // End of an item is selected
+
+			// Break out of switch
+			break;
+
+		} // End of a double click notification code
+		default:
+		{
+			// Default notification code
+
+			// No need to do anything here, just continue with default result
+
+			// Break out of switch
+			break;
+
+		} // End of default notification code
+
+	}; // End of selection for list view window notification code
 
 	return bResult;
 

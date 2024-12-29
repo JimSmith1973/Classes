@@ -39,7 +39,7 @@ public:
 
 	int GetSelectedItem();
 
-	BOOL HandleNotifyMessage( WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( LPTSTR ) = NULL );
+	BOOL HandleNotifyMessage( WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( LPTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPTSTR lpszItemText ), PFNLVCOMPARE lpCompareFunction );
 
 	BOOL Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint = TRUE );
 
