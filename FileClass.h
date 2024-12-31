@@ -34,8 +34,12 @@ public:
 	BOOL CreateRead( LPCSTR lpszFileName );
 
 	BOOL CreateWrite( LPCSTR lpszFileName );
-	
+
+	int DisplayText( HWND hWnd = NULL, LPCTSTR lpszCaption = INFORMATION_MESSAGE_CAPTION, UINT uType = ( MB_OK | MB_ICONINFORMATION ) );
+
 	DWORD GetSize( LPDWORD lpFileSizeHigh = NULL );
+
+	BOOL Read();
 
 	BOOL Read( LPVOID lpBuffer, DWORD dwNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead = NULL, LPOVERLAPPED lpOverlapped = NULL );
 
@@ -43,5 +47,6 @@ public:
 
 protected:
 	HANDLE m_hFile;
+	LPTSTR m_lpszFileText;
 
 }; // End of class File

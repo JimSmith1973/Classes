@@ -6,6 +6,7 @@ File::File()
 {
 	// Initialise member variables
 	::ZeroMemory( &m_hFile, sizeof( m_hFile ) );
+	m_lpszFileText = NULL; 
 
 } // End of function File::File
  
@@ -13,6 +14,16 @@ File::~File()
 {
 	// Clear member variables
 	::ZeroMemory( &m_hFile, sizeof( m_hFile ) );
+
+	// See if file text is valid
+	if( m_lpszFileText )
+	{
+		// File text is valid
+
+		// Free string memory
+		delete [] m_lpszFileText;
+
+	} // End of file text is valid
 
 } // End of function File::~File
 
@@ -116,12 +127,65 @@ BOOL File::CreateWrite( LPCSTR lpszFileName )
 
 } // End of function File::CreateWrite
 
+int File::DisplayText( HWND hWnd, LPCTSTR lpszCaption, UINT uType )
+{
+	// Display file text
+	return ::MessageBox( hWnd, m_lpszFileText, lpszCaption, uType );
+
+} // End of function File::DisplayText
+
 DWORD File::GetSize( LPDWORD lpFileSizeHigh )
 {
 	// Get file size
 	return ::GetFileSize( m_hFile, lpFileSizeHigh );
 
 } // End of function File::GetSize
+
+BOOL File::Read()
+{
+	BOOL bResult = FALSE;
+
+	DWORD dwFileSize;
+
+	// Get file size
+	dwFileSize = ::GetFileSize( m_hFile, NULL );
+
+	// Ensure that file size was got
+	if( dwFileSize != INVALID_FILE_SIZE )
+	{
+		// Successfully got file size
+
+		// See if file text is valid
+		if( m_lpszFileText )
+		{
+			// File text is valid
+
+			// Free string memory
+			delete [] m_lpszFileText;
+
+		} // End of file text is valid
+
+		// Allocate string memory
+		m_lpszFileText = new char[ dwFileSize + sizeof( char ) ];
+
+		// Read file text
+		if( ::ReadFile( m_hFile, m_lpszFileText, dwFileSize, NULL, NULL ) )
+		{
+			// Successfully read file text
+
+			// Terminate file text
+			m_lpszFileText[ dwFileSize ] = ( char )NULL;
+
+			// Update return value
+			bResult = TRUE;
+
+		} // End of successfully read file text
+
+	} // End of successfully got file size
+
+	return bResult;
+
+} // End of function File::Read
 
 BOOL File::Read( LPVOID lpBuffer, DWORD dwNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped )
 {
