@@ -67,7 +67,7 @@ Window::operator HWND()
 
 } // End of function Window::operator HWND()
 
-BOOL Window::Create( LPCTSTR lpszClassName, HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowTitle, DWORD dwExStyle, DWORD dwStyle, HMENU hMenu, int nLeft, int nTop, int nWidth, int nHeight, LPVOID lpParam )
+BOOL Window::Create( LPCTSTR lpszClassName, HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowTitle, HMENU hMenu, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, LPVOID lpParam )
 {
 	BOOL bResult = FALSE;
 

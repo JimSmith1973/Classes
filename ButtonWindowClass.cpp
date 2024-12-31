@@ -15,7 +15,7 @@ BOOL ButtonWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWin
 	BOOL bResult = FALSE;
 
 	// Create window
-	if( Window::Create( BUTTON_WINDOW_CLASS_NAME, hWndParent, hInstance, lpszWindowText, dwExStyle, dwStyle, ( HMENU )( INT_PTR )nID, nLeft, nTop, nWidth, nHeight, lpParam ) )
+	if( Window::Create( BUTTON_WINDOW_CLASS_NAME, hWndParent, hInstance, lpszWindowText, ( HMENU )( INT_PTR )nID, dwExStyle, dwStyle, nLeft, nTop, nWidth, nHeight, lpParam ) )
 	{
 		// Successfully created window
 

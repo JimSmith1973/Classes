@@ -10,12 +10,12 @@ EditWindow::~EditWindow()
 {
 } // End of function EditWindow::~EditWindow
 
-BOOL EditWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, DWORD dwExStyle, DWORD dwStyle, HMENU hMenu, int nLeft, int nTop, int nWidth, int nHeight, LPVOID lpParam )
+BOOL EditWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, HMENU hMenu, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, LPVOID lpParam )
 {
 	BOOL bResult = FALSE;
 
 	// Create window
-	if( Window::Create( EDIT_WINDOW_CLASS_NAME, hWndParent, hInstance, lpszWindowText, dwExStyle, dwStyle, hMenu, nLeft, nTop, nWidth, nHeight, lpParam ) )
+	if( Window::Create( EDIT_WINDOW_CLASS_NAME, hWndParent, hInstance, lpszWindowText, hMenu, dwExStyle, dwStyle, nLeft, nTop, nWidth, nHeight, lpParam ) )
 	{
 		// Successfully created window
 
