@@ -31,7 +31,11 @@ public:
 	HtmlFile();
 	~HtmlFile();
 
-	int ProcessTags( LPCTSTR lpszRequiredTagName, LPCTSTR lpszRequiredAttributeName, LPCTSTR lpszParentUrl, void( *lpTagFunction )( LPCTSTR lpszTag, LPCTSTR lpszAttributeValue ) );
+	BOOL GetAttributeValue( LPCTSTR lpszTag, LPCTSTR lpszParentUrl, LPCTSTR lpszAttributeName, LPTSTR lpszAttributeValue );
+
+	BOOL GetTagName( LPCTSTR lpszTag, LPTSTR lpszTagName );
+
+	int ProcessTags( LPCTSTR lpszParentUrl, void( *lpTagFunction )( LPCTSTR lpszParentUrl, LPCTSTR lpszTag ) );
 
 protected:
 
