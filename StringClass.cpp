@@ -152,6 +152,20 @@ String& String::operator += ( LPCTSTR lpszAppend )
 
 } // End of function String::operator +=
 
+String String::operator + ( LPCTSTR lpszAdd )
+{
+	String combined = m_lpszBuffer;
+
+	// Copy member buffer into combined string
+	combined = m_lpszBuffer;
+
+	// Append text onto combined string
+	combined += lpszAdd;
+
+	return combined;
+
+} // End of function String::operator +
+
 String::operator LPTSTR()
 {
 	return m_lpszBuffer;

@@ -23,6 +23,8 @@ public:
 	String& operator += ( char cAppend );
 
 	String& operator += ( LPCTSTR lpszAppend );
+	
+	String operator + ( LPCTSTR lpszAdd );
 
 	operator LPTSTR();
 
