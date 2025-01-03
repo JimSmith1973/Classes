@@ -89,6 +89,69 @@ BOOL String::operator != ( LPCTSTR lpszBuffer )
 
 } // End of function String::operator !=
 
+String& String::operator += ( char cAppend )
+{
+	// Allocate string memory
+	LPTSTR lpszTemporary = new char[ m_dwBufferLength + sizeof( char ) ];
+
+	// Copy buffer into temporary string
+	lstrcpy( lpszTemporary, m_lpszBuffer );
+
+	// Free string memory
+	delete [] m_lpszBuffer;
+
+	// Calculate buffer length
+	m_dwBufferLength = ( m_dwBufferLength + sizeof( char ) );
+
+	// Allocate string memory
+	m_lpszBuffer = new char[ m_dwBufferLength + sizeof( char ) ];
+
+	// Copy temporary string into buffer
+	lstrcpy( m_lpszBuffer, lpszTemporary );
+
+	// Add character onto buffer
+	m_lpszBuffer[ m_dwBufferLength - sizeof( char ) ] = cAppend;
+
+	// Terminate buffer
+	m_lpszBuffer[ m_dwBufferLength ] = ( char )NULL;
+
+	// Free string memory
+	delete [] lpszTemporary;
+
+	return *this;
+
+} // End of function String::operator +=
+
+String& String::operator += ( LPCTSTR lpszAppend )
+{
+	// Allocate string memory
+	LPTSTR lpszTemporary = new char[ m_dwBufferLength + sizeof( char ) ];
+
+	// Copy buffer into temporary string
+	lstrcpy( lpszTemporary, m_lpszBuffer );
+
+	// Free string memory
+	delete [] m_lpszBuffer;
+
+	// Calculate buffer length
+	m_dwBufferLength = ( m_dwBufferLength + lstrlen( lpszAppend ) );
+
+	// Allocate string memory
+	m_lpszBuffer = new char[ m_dwBufferLength + sizeof( char ) ];
+
+	// Copy temporary string into buffer
+	lstrcpy( m_lpszBuffer, lpszTemporary );
+
+	// Append text onto buffer
+	lstrcat( m_lpszBuffer, lpszAppend );
+
+	// Free string memory
+	delete [] lpszTemporary;
+
+	return *this;
+
+} // End of function String::operator +=
+
 String::operator LPTSTR()
 {
 	return m_lpszBuffer;

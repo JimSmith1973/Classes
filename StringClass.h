@@ -20,6 +20,10 @@ public:
 
 	BOOL operator != ( LPCTSTR lpszBuffer );
 
+	String& operator += ( char cAppend );
+
+	String& operator += ( LPCTSTR lpszAppend );
+
 	operator LPTSTR();
 
 	int Display( HWND hWnd = NULL, LPCTSTR lpszCaption = INFORMATION_MESSAGE_CAPTION, UINT uType = MB_OK );
