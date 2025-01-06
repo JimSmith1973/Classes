@@ -22,6 +22,9 @@
 
 #define HTML_FILE_CLASS_ANCHOR_TAG_NAME											"a"
 #define HTML_FILE_CLASS_ANCHOR_TAG_ATTRIBUTE									"href"
+#define HTML_FILE_CLASS_ANCHOR_TAG_TITLE										"Anchor"
+
+#define HTML_FILE_CLASS_UNKNOWN_TAG_TITLE										"Unknown"
 
 #define HTML_FILE_CLASS_PROCESS_TAGS_STATUS_MESSAGE_FORMAT_STRING				"%s (%d tags)"
 

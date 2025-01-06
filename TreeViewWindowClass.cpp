@@ -28,6 +28,66 @@ BOOL TreeViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszW
 
 } // End of function TreeViewWindow::Create
 
+HTREEITEM TreeViewWindow::FindItem( LPCTSTR lpszRequiredItemText, HTREEITEM htiParent )
+{
+	HTREEITEM htiResult = NULL;
+
+	HTREEITEM htiCurrent;
+
+	// Allocate string memory
+	LPTSTR lpszCurrentItemText = new char[ STRING_LENGTH ];
+
+	// Get first child item
+	htiCurrent = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_CHILD, ( LPARAM )htiParent );
+
+	// Loop through all child items
+	while( htiCurrent )
+	{
+		// Get current item text
+		if( GetItemText( htiCurrent, lpszCurrentItemText ) )
+		{
+			// Successfully got current item text
+
+			// See if this is the required item
+			if( lstrcmpi( lpszCurrentItemText, lpszRequiredItemText ) == 0 )
+			{
+				// This is the required item
+
+				// Update return value
+				htiResult = htiCurrent;
+
+				// Force exit from loop
+				htiCurrent = NULL;
+
+			} // End of this is the required item
+			else
+			{
+				// This is not the required item
+
+				// Get next child item
+				htiCurrent = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_NEXT, ( LPARAM )htiCurrent );
+
+			} // End of this is not the required item
+
+		} // End of successfully got current item text
+		else
+		{
+			// Unable to get current item text
+
+			// Force exit from loop
+			htiCurrent = NULL;
+
+		} // End of unable to get current item text
+
+	}; // End of loop through all child items
+
+	// Free string memory
+	delete [] lpszCurrentItemText;
+
+	return htiResult;
+
+} // End of function TreeViewWindow::FindItem
+
 BOOL TreeViewWindow::GetItemText( HTREEITEM htiCurrent, LPTSTR lpszItemText, DWORD dwMaximumTextLength )
 {
 	BOOL bResult = FALSE;
@@ -181,6 +241,39 @@ HTREEITEM TreeViewWindow::InsertItem( LPCTSTR lpszItemText, HTREEITEM htiParent,
 
 	// Insert item
 	htiResult = ( HTREEITEM )::SendMessage( m_hWnd, TVM_INSERTITEM, ( WPARAM )0, ( LPARAM )&tvInsert );
+
+	return htiResult;
+
+} // End of function TreeViewWindow::InsertItem
+
+HTREEITEM TreeViewWindow::InsertItem( LPCTSTR lpszItemText, LPCTSTR lpszParentItemText, HTREEITEM htiInsertAfter )
+{
+	HTREEITEM htiResult = NULL;
+
+	HTREEITEM htiParent;
+
+	// Find parent item
+	htiParent = FindItem( lpszParentItemText, TVI_ROOT );
+
+	// Ensure that parent item was found
+	if( !( htiParent ) )
+	{
+		// Unable to find parent item
+
+		// Insert parent item
+		htiParent = InsertItem( lpszParentItemText, TVI_ROOT, htiInsertAfter );
+
+	} // End of unable to find parent item
+
+	// Ensure that parent item is valid
+	if( htiParent )
+	{
+		// Parent item is valid
+
+		// Insert item
+		htiResult = InsertItem( lpszItemText, htiParent, htiInsertAfter );
+
+	} // End of parent item is valid
 
 	return htiResult;
 
