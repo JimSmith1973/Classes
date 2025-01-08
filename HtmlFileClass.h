@@ -24,6 +24,12 @@
 #define HTML_FILE_CLASS_ANCHOR_TAG_ATTRIBUTE									"href"
 #define HTML_FILE_CLASS_ANCHOR_TAG_TITLE										"Anchor"
 
+#define HTML_FILE_CLASS_IMAGE_TAG_NAME											"img"
+#define HTML_FILE_CLASS_IMAGE_TAG_ATTRIBUTE										"src"
+#define HTML_FILE_CLASS_IMAGE_TAG_TITLE											"Image"
+
+#define HTML_FILE_CLASS_START_OF_END_TAG_NAME_CHARACTER							'/'
+
 #define HTML_FILE_CLASS_UNKNOWN_TAG_TITLE										"Unknown"
 
 #define HTML_FILE_CLASS_PROCESS_TAGS_STATUS_MESSAGE_FORMAT_STRING				"%s (%d tags)"
