@@ -10,6 +10,61 @@ TreeViewWindow::~TreeViewWindow()
 {
 } // End of function TreeViewWindow::~TreeViewWindow
 
+int TreeViewWindow::ActionChildItemText( BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) )
+{
+} // End of function TreeViewWindow::ActionChildItemText
+
+int TreeViewWindow::ActionChildItemText( HTREEITEM htiCurrent, BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) )
+{
+} // End of function TreeViewWindow::ActionChildItemText
+
+BOOL TreeViewWindow::ActionItemText( BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) )
+{
+	BOOL bResult = FALSE;
+
+	HTREEITEM htiSelected;
+
+	// Get selected item
+	htiSelected = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_CARET, ( LPARAM )NULL );
+
+	// Ensure that selected item was got
+	if( htiSelected )
+	{
+		// Successfully got selected item
+
+		// Action selected item
+		bResult = ActionItemText( htiSelected, lpActionFunction );
+
+	} // End of successfully got selected item
+
+	return bResult;
+
+} // End of function TreeViewWindow::ActionItemText
+
+BOOL TreeViewWindow::ActionItemText( HTREEITEM htiCurrent, BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) )
+{
+	BOOL bResult = FALSE;
+
+	// Allocate string memory
+	LPTSTR lpszItemText = new char[ STRING_LENGTH ];
+
+	// Get item text
+	if( GetItemText( htiCurrent, lpszItemText ) )
+	{
+		// Successfully got item text
+
+		// Action item
+		bResult = ( *lpActionFunction )( lpszItemText );
+
+	} // End of successfully got item text
+
+	// Free string memory
+	delete [] lpszItemText;
+
+	return bResult;
+
+} // End of function TreeViewWindow::ActionItemText
+
 BOOL TreeViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, HMENU hMenu, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, LPVOID lpParam )
 {
 	BOOL bResult = FALSE;
@@ -223,6 +278,14 @@ BOOL TreeViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelect
 	return bResult;
 
 } // End of function TreeViewWindow::HandleNotifyMessage
+
+BOOL TreeViewWindow::HasChildren( HTREEITEM htiCurrent )
+{
+	BOOL bResult = FALSE;
+
+	return bResult;
+
+} // End of function TreeViewWindow::HasChildren
 
 HTREEITEM TreeViewWindow::InsertItem( LPCTSTR lpszItemText, HTREEITEM htiParent, HTREEITEM htiInsertAfter )
 {
