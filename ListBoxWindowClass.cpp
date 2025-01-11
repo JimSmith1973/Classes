@@ -24,6 +24,30 @@ int ListBoxWindow::AddText( LPCTSTR lpszText )
 
 } // End of function ListBoxWindow::AddText
 
+int ListBoxWindow::AddTextEx( LPCTSTR lpszText )
+{
+	int nResult;
+
+	// Add text
+	nResult = ::SendMessage( m_hWnd, LB_ADDSTRING, ( WPARAM )NULL, ( LPARAM )lpszText );
+
+	// Ensure that text was added
+	if( nResult >= 0 )
+	{
+		// Successfully added text
+
+		// Ensure that text is visible
+		::SendMessage( m_hWnd, LB_SETTOPINDEX, ( WPARAM )nResult, ( LPARAM )NULL );
+
+		// Update window
+		::UpdateWindow( m_hWnd );
+
+	} // End of successfully added text
+
+	return nResult;
+
+} // End of function ListBoxWindow::AddTextEx
+
 BOOL ListBoxWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, HMENU hMenu, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, LPVOID lpParam )
 {
 	BOOL bResult = FALSE;
