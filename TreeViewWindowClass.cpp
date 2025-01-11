@@ -12,10 +12,56 @@ TreeViewWindow::~TreeViewWindow()
 
 int TreeViewWindow::ActionChildItemText( BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) )
 {
+	int nResult = 0;
+
+	HTREEITEM htiSelected;
+
+	// Get selected item
+	htiSelected = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_CARET, ( LPARAM )NULL );
+
+	// Ensure that selected item was got
+	if( htiSelected )
+	{
+		// Successfully got selected item
+
+		// Action selected item
+		nResult = ActionChildItemText( htiSelected, lpActionFunction );
+
+	} // End of successfully got selected item
+
+	return nResult;
+
 } // End of function TreeViewWindow::ActionChildItemText
 
-int TreeViewWindow::ActionChildItemText( HTREEITEM htiCurrent, BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) )
+int TreeViewWindow::ActionChildItemText( HTREEITEM htiParent, BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) )
 {
+	int nResult;
+
+	HTREEITEM htiCurrent;
+
+	// Get first child item
+	htiCurrent = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_CHILD, ( LPARAM )htiParent );
+
+	// Loop through all child items
+	while( htiCurrent )
+	{
+		// Action current item
+		if( ActionItemText( htiCurrent, lpActionFunction ) )
+		{
+			// Successfully actioned current item
+
+			// Update return value
+			nResult ++;
+
+		} // End of successfully actioned current item
+
+		// Get next child item
+		htiCurrent = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_NEXT, ( LPARAM )htiCurrent );
+
+	}; // End of loop through all child items
+
+	return nResult;
+
 } // End of function TreeViewWindow::ActionChildItemText
 
 BOOL TreeViewWindow::ActionItemText( BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) )
@@ -165,6 +211,13 @@ BOOL TreeViewWindow::GetItemText( HTREEITEM htiCurrent, LPTSTR lpszItemText, DWO
 
 } // End of function TreeViewWindow::GetItemText
 
+HTREEITEM TreeViewWindow::GetSelectedItem()
+{
+	// Get selected item
+	return ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_CARET, ( LPARAM )NULL );
+
+} // End of function TreeViewWindow::GetSelectedItem
+
 BOOL TreeViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPTSTR lpszItemText ) )
 {
 	BOOL bResult = FALSE;
@@ -279,9 +332,40 @@ BOOL TreeViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelect
 
 } // End of function TreeViewWindow::HandleNotifyMessage
 
-BOOL TreeViewWindow::HasChildren( HTREEITEM htiCurrent )
+BOOL TreeViewWindow::HasChildren( HTREEITEM htiParent )
 {
 	BOOL bResult = FALSE;
+
+	// Ensure that parent item is valid
+	if( !( htiParent ) )
+	{
+		// Parent item is not valid
+
+		// Get selected item as parent
+		htiParent = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_CARET, ( LPARAM )NULL );
+
+	} // End of parent item is not valid
+
+	// Ensure that parent item is valid
+	if( htiParent )
+	{
+		// Parent item is valid
+		HTREEITEM htiChild;
+
+		// Get first child item
+		htiChild = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_CHILD, ( LPARAM )htiParent );
+
+		// See if first child item was got
+		if( htiChild )
+		{
+			// Successfully got first child item
+
+			// Update return value
+			bResult = TRUE;
+
+		} // End of successfully got first child item
+
+	} // End of parent item is valid
 
 	return bResult;
 

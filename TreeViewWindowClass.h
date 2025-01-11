@@ -20,6 +20,8 @@
 #define TREE_VIEW_WINDOW_CLASS_DEFAULT_HEIGHT									CW_USEDEFAULT
 #define TREE_VIEW_WINDOW_CLASS_DEFAULT_LP_PARAM									NULL
 
+#define TREE_VIEW_WINDOW_CLASS_UNABLE_TO_GET_SELECTED_ITEM_ERROR_MESSAGE		"Unable to get selected tree item"
+
 class TreeViewWindow : public Window
 {
 public:
@@ -28,7 +30,7 @@ public:
 
 	int ActionChildItemText( BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) );
 
-	int ActionChildItemText( HTREEITEM htiCurrent, BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) );
+	int ActionChildItemText( HTREEITEM htiParent, BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) );
 
 	BOOL ActionItemText( BOOL( *lpActionFunction )( LPCTSTR lpszItemText ) );
 
@@ -40,9 +42,11 @@ public:
 
 	BOOL GetItemText( HTREEITEM htiCurrent, LPTSTR lpszItemText, DWORD dwMaximumTextLength = STRING_LENGTH );
 
+	HTREEITEM GetSelectedItem();
+
 	BOOL HandleNotifyMessage( WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( LPTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPTSTR lpszItemText ) );
 
-	BOOL HasChildren( HTREEITEM htiCurrent = NULL );
+	BOOL HasChildren( HTREEITEM htiParent = NULL );
 
 	HTREEITEM InsertItem( LPCTSTR lpszItemText, HTREEITEM htiParent = TVI_ROOT, HTREEITEM htiInsertAfter = TVI_SORT );
 
