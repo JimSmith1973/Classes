@@ -87,6 +87,77 @@ BOOL ComboBoxWindow::HandleCommandMessage( WPARAM wParam, LPARAM, void( *lpSelec
 
 } // End of function ComboBoxWindow::HandleCommandMessage
 
+BOOL ComboBoxWindow::Load( LPCTSTR lpszFileName )
+{
+	BOOL bResult = FALSE;
+
+	HANDLE hFile;
+
+	// Create file
+	hFile = CreateFile( lpszFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL );
+
+	// Ensure that file was created
+	if( hFile != INVALID_HANDLE_VALUE )
+	{
+		// Successfully created file
+		DWORD dwFileSize;
+
+		// Get file size
+		dwFileSize = GetFileSize( hFile, NULL );
+
+		// Ensure that file size was got
+		if( dwFileSize != INVALID_FILE_SIZE )
+		{
+			// Successfully got file size
+
+			// Allocate string memory
+			LPTSTR lpszFileText = new char[ dwFileSize + sizeof( char ) ];
+
+			// Delete all items from combo box window
+			::SendMessage( m_hWnd, CB_RESETCONTENT, ( WPARAM )NULL, ( LPARAM )NULL );
+
+			// Read file text
+			if( ReadFile( hFile, lpszFileText, dwFileSize, NULL, NULL ) )
+			{
+				// Successfully read file text
+				LPTSTR lpszItem;
+
+				// Terminate file text
+				lpszFileText[ dwFileSize ] = ( char )NULL;
+
+				// Get first item from file text
+				lpszItem = strtok( lpszFileText, NEW_LINE_TEXT );
+
+				// Loop through all items
+				while( lpszItem )
+				{
+					// Add item to combo box window
+					::SendMessage( m_hWnd, CB_ADDSTRING, ( WPARAM )NULL, ( LPARAM )lpszItem );
+
+					// Get next item from file text
+					lpszItem = strtok( NULL, NEW_LINE_TEXT );
+
+				}; // End of loop through all items
+
+				// Update trturn value
+				bResult = TRUE;
+
+			} // End of successfully read file text
+
+			// Free string memory
+			delete [] lpszFileText;
+
+		} // End of successfully got file size
+
+		// Close file
+		CloseHandle( hFile );
+
+	} // End of successfully created file
+
+	return bResult;
+
+} // End of function ComboBoxWindow::Load
+
 BOOL ComboBoxWindow::Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint )
 {
 	BOOL bResult = FALSE;
@@ -104,6 +175,87 @@ BOOL ComboBoxWindow::Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bR
 	return bResult;
 
 } // End of function ComboBoxWindow::Move
+
+BOOL ComboBoxWindow::Save( LPCTSTR lpszFileName )
+{
+	BOOL bResult = FALSE;
+
+	HANDLE hFile;
+
+	// Create file
+	hFile = CreateFile( lpszFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
+
+	// Ensure that file was created
+	if( hFile != INVALID_HANDLE_VALUE )
+	{
+		// Successfully created file
+		int nItemCount;
+		int nWhichItem;
+
+		// Allocate string memory
+		LPTSTR lpszItemText = new char[ STRING_LENGTH ];
+
+		// Count items on combo box window
+		nItemCount = ::SendMessage( m_hWnd, CB_GETCOUNT, ( WPARAM )NULL, ( LPARAM )NULL );
+
+		// Update return value (assume success)
+		bResult = TRUE;
+
+		// Loop through items on combo box window
+		for( nWhichItem = 0; nWhichItem < nItemCount; nWhichItem ++ )
+		{
+			// Get item text
+			if( ::SendMessage( m_hWnd, CB_GETLBTEXT, ( WPARAM )nWhichItem, ( LPARAM )lpszItemText ) )
+			{
+				// Successfully got item text
+
+				// Write item text to file
+				if( WriteFile( hFile, lpszItemText, lstrlen( lpszItemText ), NULL, NULL ) )
+				{
+					// Successfully wrote item text to file
+
+					// Write new line to file
+					WriteFile( hFile, NEW_LINE_TEXT, lstrlen( NEW_LINE_TEXT ), NULL, NULL );
+
+				} // End of successfully wrote item text to file
+				else
+				{
+					// Unable to write item text to file
+
+					// Update return value
+					bResult = FALSE;
+
+					// Force exit from loop
+					nWhichItem = nItemCount;
+
+				} // End of unable to write item text to file
+
+			} // End of successfully got item text
+			else
+			{
+				// Unable to get item text
+
+				// Update return value
+				bResult = FALSE;
+
+				// Force exit from loop
+				nWhichItem = nItemCount;
+
+			} // End of unable to get item text
+
+		}; // End of loop through items on combo box window
+
+		// Free string memory
+		delete [] lpszItemText;
+
+		// Close file
+		CloseHandle( hFile );
+
+	} // End of successfully created file
+
+	return bResult;
+
+} // End of function ComboBoxWindow::Save
 
 int ComboBoxWindow::SelectItem( int nWhichItem )
 {

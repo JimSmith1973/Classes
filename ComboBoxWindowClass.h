@@ -20,6 +20,8 @@
 #define COMBO_BOX_WINDOW_CLASS_DEFAULT_HEIGHT									CW_USEDEFAULT
 #define COMBO_BOX_WINDOW_CLASS_DEFAULT_LP_PARAM									NULL
 
+#define COMBO_BOX_WINDOW_CLASS_UNABLE_TO_SAVE_WARNING_MESSAGE					"Unable to save combo box window.\r\n\r\nDo you want to close?"
+
 class ComboBoxWindow : public Window
 {
 public:
@@ -34,7 +36,11 @@ public:
 
 	BOOL HandleCommandMessage( WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( LPTSTR lpszItemText ) );
 
+	BOOL Load( LPCTSTR lpszFileName );
+
 	BOOL Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint = TRUE );
+
+	BOOL Save( LPCTSTR lpszFileName );
 
 	int SelectItem( int nWhichItem );
 
