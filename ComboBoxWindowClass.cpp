@@ -10,6 +10,13 @@ ComboBoxWindow::~ComboBoxWindow()
 {
 } // End of function ComboBoxWindow::~ComboBoxWindow
 
+int ComboBoxWindow::AddItem( LPCTSTR lpszItemText )
+{
+	// Add item
+	return ::SendMessage( m_hWnd, CB_ADDSTRING, ( WPARAM )NULL, ( LPARAM )lpszItemText );
+
+} // End of function ComboBoxWindow::AddItem
+
 int ComboBoxWindow::AddString( LPCTSTR lpszString )
 {
 	// Add string
@@ -23,6 +30,27 @@ int ComboBoxWindow::AddText( LPCTSTR lpszText )
 	return ::SendMessage( m_hWnd, CB_ADDSTRING, ( WPARAM )NULL, ( LPARAM )lpszText );
 
 } // End of function ComboBoxWindow::AddText
+
+int ComboBoxWindow::AddUniqueItem( LPCTSTR lpszItemText )
+{
+	int nResult;
+
+	// Attempt to find item on combo box window
+	nResult = ::SendMessage( m_hWnd, CB_FINDSTRING, ( WPARAM )COMBO_BOX_WINDOW_CLASS_FIND_ALL_ITEMS, ( LPARAM )lpszItemText );
+
+	// See if item was found on combo box window
+	if( nResult < 0 )
+	{
+		// Item was not found on combo box window
+
+		// Add item to combo box window
+		nResult = ::SendMessage( m_hWnd, CB_ADDSTRING, ( WPARAM )NULL, ( LPARAM )lpszItemText );
+
+	} // End of item was not found on combo box window
+
+	return nResult;
+
+} // End of function ComboBoxWindow::AddUniqueItem
 
 BOOL ComboBoxWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, int nID, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, LPVOID lpParam )
 {
@@ -41,6 +69,13 @@ BOOL ComboBoxWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszW
 	return bResult;
 
 } // End of function ComboBoxWindow::Create
+
+int ComboBoxWindow::FindItem( LPCTSTR lpszRequiredItemText, int nFirstItem )
+{
+	// Find item
+	return ::SendMessage( m_hWnd, CB_FINDSTRING, ( WPARAM )nFirstItem, ( LPARAM )lpszRequiredItemText );
+
+} // End of function ComboBoxWindow::FindItem
 
 BOOL ComboBoxWindow::HandleCommandMessage( WPARAM wParam, LPARAM, void( *lpSelectionChangedFunction )( LPTSTR lpszItemText ) )
 {
