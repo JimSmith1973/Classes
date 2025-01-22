@@ -40,6 +40,8 @@ public:
 
 	HTREEITEM FindItem( LPCTSTR lpszRequiredItemText, HTREEITEM htiParent = TVI_ROOT );
 
+	BOOL GetItemPath( HTREEITEM htiCurrent, LPTSTR lpszItemPath, DWORD dwMaximumPathLength = STRING_LENGTH );
+
 	BOOL GetItemText( HTREEITEM htiCurrent, LPTSTR lpszItemText, DWORD dwMaximumTextLength = STRING_LENGTH );
 
 	HTREEITEM GetSelectedItem();

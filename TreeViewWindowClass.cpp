@@ -92,7 +92,7 @@ BOOL TreeViewWindow::ActionItemText( HTREEITEM htiCurrent, BOOL( *lpActionFuncti
 	BOOL bResult = FALSE;
 
 	// Allocate string memory
-	LPTSTR lpszItemText = new char[ STRING_LENGTH ];
+	LPTSTR lpszItemText = new char[ STRING_LENGTH + sizeof( char ) ];
 
 	// Get item text
 	if( GetItemText( htiCurrent, lpszItemText ) )
@@ -136,7 +136,7 @@ HTREEITEM TreeViewWindow::FindItem( LPCTSTR lpszRequiredItemText, HTREEITEM htiP
 	HTREEITEM htiCurrent;
 
 	// Allocate string memory
-	LPTSTR lpszCurrentItemText = new char[ STRING_LENGTH ];
+	LPTSTR lpszCurrentItemText = new char[ STRING_LENGTH + sizeof( char ) ];
 
 	// Get first child item
 	htiCurrent = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_CHILD, ( LPARAM )htiParent );
@@ -188,6 +188,88 @@ HTREEITEM TreeViewWindow::FindItem( LPCTSTR lpszRequiredItemText, HTREEITEM htiP
 	return htiResult;
 
 } // End of function TreeViewWindow::FindItem
+
+BOOL TreeViewWindow::GetItemPath( HTREEITEM htiCurrent, LPTSTR lpszItemPath, DWORD dwMaximumPathLength )
+{
+	BOOL bResult = TRUE; // Assume success
+
+	TVITEM tvi;
+
+	// Allocate string memory
+	LPTSTR lpszItemText	= new char[ dwMaximumPathLength + sizeof( char ) ];
+	LPTSTR lpszTemp		= new char[ dwMaximumPathLength + sizeof( char ) ];
+
+	// Clear item path
+	lpszItemPath[ 0 ] = ( char )NULL;
+
+	// Clear tree view item structure
+	::ZeroMemory( &tvi, sizeof( tvi ) );
+
+	// Initialise tree view item structure
+	tvi.mask		= TVIF_TEXT;
+	tvi.hItem		= htiCurrent;
+	tvi.pszText		= lpszItemText;
+	tvi.cchTextMax	= dwMaximumPathLength;
+
+	// Loop through parent items
+	while( tvi.hItem )
+	{
+		// Get item text
+		if( ::SendMessage( m_hWnd, TVM_GETITEM, ( WPARAM )NULL, ( LPARAM )&tvi ) )
+		{
+			// Successfully got item text
+
+			// Copy item path into temporary string
+			lstrcpy( lpszTemp, lpszItemPath );
+
+			// Copy item text onto item path
+			lstrcpy( lpszItemPath, lpszItemText );
+
+			// See if temp string contains text
+			if( lpszTemp[ 0 ] )
+			{
+				// Temp string contains text
+
+				// Ensure that item path ends with a back-slash
+				if( lpszItemPath[ lstrlen( lpszItemPath ) - sizeof( char ) ] != ASCII_BACK_SLASH_CHARACTER )
+				{
+					// Item path does not end with a back-slash
+
+					// Append a back-slash onto item path
+					lstrcat( lpszItemPath, ASCII_BACK_SLASH_STRING );
+
+				} // End of item path does not end with a back-slash
+
+				// Append temp string onto item path
+				lstrcat( lpszItemPath, lpszTemp );
+
+			} // End of temp string contains text
+
+			// Get parent item
+			tvi.hItem = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_PARENT, ( LPARAM )tvi.hItem );
+
+		} // End of successfully got item text
+		else
+		{
+			// Unable to get item text
+
+			// Update return value
+			bResult = FALSE;
+
+			// Force exit from loop
+			tvi.hItem = NULL;
+
+		} // End of unable to get item text
+
+	}; // End of loop through parent items
+
+	// Free string memory
+	delete [] lpszItemText;
+	delete [] lpszTemp;
+
+	return bResult;
+
+} // End of function TreeViewWindow::GetItemPath
 
 BOOL TreeViewWindow::GetItemText( HTREEITEM htiCurrent, LPTSTR lpszItemText, DWORD dwMaximumTextLength )
 {
