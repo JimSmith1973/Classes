@@ -77,6 +77,13 @@ int ComboBoxWindow::FindItem( LPCTSTR lpszRequiredItemText, int nFirstItem )
 
 } // End of function ComboBoxWindow::FindItem
 
+int ComboBoxWindow::GetItemText( int nWhichItem, LPTSTR lpszItemText )
+{
+	// Get item text
+	return ::SendMessage( m_hWnd, CB_GETLBTEXT, ( WPARAM )nWhichItem, ( LPARAM )lpszItemText );
+
+} // End of function ComboBoxWindow::GetItemText
+
 BOOL ComboBoxWindow::HandleCommandMessage( WPARAM wParam, LPARAM, void( *lpSelectionChangedFunction )( LPTSTR lpszItemText ) )
 {
 	BOOL bResult = FALSE;
@@ -155,22 +162,22 @@ BOOL ComboBoxWindow::Load( LPCTSTR lpszFileName )
 			if( ReadFile( hFile, lpszFileText, dwFileSize, NULL, NULL ) )
 			{
 				// Successfully read file text
-				LPTSTR lpszItem;
+				LPTSTR lpszItemText;
 
 				// Terminate file text
 				lpszFileText[ dwFileSize ] = ( char )NULL;
 
 				// Get first item from file text
-				lpszItem = strtok( lpszFileText, NEW_LINE_TEXT );
+				lpszItemText = strtok( lpszFileText, NEW_LINE_TEXT );
 
 				// Loop through all items
-				while( lpszItem )
+				while( lpszItemText )
 				{
 					// Add item to combo box window
-					::SendMessage( m_hWnd, CB_ADDSTRING, ( WPARAM )NULL, ( LPARAM )lpszItem );
+					::SendMessage( m_hWnd, CB_ADDSTRING, ( WPARAM )NULL, ( LPARAM )lpszItemText );
 
 					// Get next item from file text
-					lpszItem = strtok( NULL, NEW_LINE_TEXT );
+					lpszItemText = strtok( NULL, NEW_LINE_TEXT );
 
 				}; // End of loop through all items
 

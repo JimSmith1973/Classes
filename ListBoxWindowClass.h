@@ -42,6 +42,8 @@ public:
 
 	BOOL Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint = TRUE );
 
+	void ResetContent();
+
 protected:
 
 }; // End of class ListBoxWindow

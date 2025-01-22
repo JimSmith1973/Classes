@@ -185,6 +185,13 @@ BOOL ListBoxWindow::Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRe
 
 } // End of function ListBoxWindow::Move
 
+void ListBoxWindow::ResetContent()
+{
+	// Reset content
+	::SendMessage( m_hWnd, LB_RESETCONTENT, ( WPARAM )NULL, ( LPARAM )NULL );
+
+} // End of function ListBoxWindow::ResetContent
+
 /*
 ListBoxWindow::
 {
