@@ -129,6 +129,52 @@ BOOL TreeViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszW
 
 } // End of function TreeViewWindow::Create
 
+BOOL TreeViewWindow::DeleteAllChildItems( HTREEITEM htiParent )
+{
+	BOOL bResult = TRUE; // Assume success
+
+	HTREEITEM htiChild;
+
+	// Get first child item
+	htiChild = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_CHILD, ( LPARAM )htiParent );
+
+	// Loop through all child items
+	while( htiChild )
+	{
+		// Delete child item
+		if( ::SendMessage( m_hWnd, TVM_DELETEITEM, ( WPARAM )NULL, ( LPARAM )htiChild ) )
+		{
+			// Successfully deleted child item
+
+			// Get first remaining child item
+			htiChild = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_CHILD, ( LPARAM )htiParent );
+
+		} // End of successfully deleted child item
+		else
+		{
+			// Unable to delete child item
+
+			// Update return value
+			bResult = FALSE;
+
+			// Force exit from loop
+			htiChild = NULL;
+
+		} // End of unable to delete child item
+
+	} // End of loop through all child items
+
+	return bResult;
+
+} // End of function TreeViewWindow::DeleteAllChildItems
+
+BOOL TreeViewWindow::DeleteItem( HTREEITEM htiCurrent )
+{
+	// Delete item
+	return ::SendMessage( m_hWnd, TVM_DELETEITEM, ( WPARAM )NULL, ( LPARAM )htiCurrent );
+
+} // End of function TreeViewWindow::DeleteItem
+
 HTREEITEM TreeViewWindow::FindItem( LPCTSTR lpszRequiredItemText, HTREEITEM htiParent )
 {
 	HTREEITEM htiResult = NULL;
@@ -365,6 +411,9 @@ BOOL TreeViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelect
 
 				// Select highlighted tree item
 				::SendMessage( m_hWnd, TVM_SELECTITEM, ( WPARAM )TVGN_CARET, ( LPARAM )htiHighlighted );
+
+				// Update return value
+				bResult = TRUE;
 
 			} // End of successfully got highlighted tree item
 
