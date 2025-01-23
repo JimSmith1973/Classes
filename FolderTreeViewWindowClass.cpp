@@ -312,6 +312,147 @@ BOOL FolderTreeViewWindow::Move( int nLeft, int nTop, int nWidth, int nHeight, B
 
 } // End of function FolderTreeViewWindow::Move
 
+BOOL FolderTreeViewWindow::SelectFolder()
+{
+	BOOL bResult = FALSE;
+
+	// Allocate string memory
+	LPTSTR lpszFolderPath = new char[ STRING_LENGTH + sizeof( char ) ];
+
+	// Get folder path
+	if( GetCurrentDirectory( STRING_LENGTH, lpszFolderPath ) )
+	{
+		// Successfully got folder path
+
+		// Select folder
+		bResult = SelectFolder( lpszFolderPath );
+
+	} // End of successfully got folder path
+
+	// Free string memory
+	delete [] lpszFolderPath;
+
+	return bResult;
+
+} // End of function FolderTreeViewWindow::SelectFolder
+
+BOOL FolderTreeViewWindow::SelectFolder( LPTSTR lpszFolderPath )
+{
+	BOOL bResult = FALSE;
+
+	LPTSTR lpszFirstBackSlash;
+
+	// Allocate string memory
+	LPTSTR lpszDrive = new char[ STRING_LENGTH + sizeof( char ) ];
+
+	// Copy folder path into drive
+	lstrcpy( lpszDrive, lpszFolderPath );
+
+	// Find end of drive
+	lpszFirstBackSlash = strchr( lpszDrive, ASCII_BACK_SLASH_CHARACTER );
+
+	// Ensure that end of drive was found
+	if( lpszFirstBackSlash )
+	{
+		// Successfully found end of drive
+		HTREEITEM htiCurrent;
+
+		// Terminate drive
+		lpszFirstBackSlash[ sizeof( ASCII_BACK_SLASH_CHARACTER ) ] = ( char )NULL;
+
+		// Find drive tree item
+		htiCurrent = FindItem( lpszDrive, TVI_ROOT );
+
+		// Ensure that drive tree item was found
+		if( htiCurrent )
+		{
+			// Successfully found drive tree item
+
+			// Expand drive tree item
+			if( ::SendMessage( m_hWnd, TVM_EXPAND, ( WPARAM )TVE_EXPAND, ( LPARAM )htiCurrent ) )
+			{
+				// Successfully expanded drive tree item
+				LPTSTR lpszCurrentSubFolder;
+
+				// Allocate string memory
+				LPTSTR lpszSubFolders = new char[ STRING_LENGTH + sizeof( char ) ];
+
+				// Get sub-folders string
+				lstrcpy( lpszSubFolders, ( lpszFolderPath + lstrlen( lpszDrive ) ) );
+
+				// Get first sub-folder
+				lpszCurrentSubFolder = strtok( lpszSubFolders, ASCII_BACK_SLASH_STRING );
+
+				// Loop through all sub-folders
+				while( lpszCurrentSubFolder )
+				{
+					// Find current sub-folder tree item
+					htiCurrent = FindItem( lpszCurrentSubFolder, htiCurrent );
+
+					// Ensure that current sub-folder tree item was found
+					if( htiCurrent )
+					{
+						// Successfully found current sub-folder tree item
+
+						// Expand current sub-folder tree item
+						if( ::SendMessage( m_hWnd, TVM_EXPAND, ( WPARAM )TVE_EXPAND, ( LPARAM )htiCurrent ) )
+						{
+							// Successfully expanded current sub-folder tree item
+
+							// Get next sub-folder
+							lpszCurrentSubFolder = strtok( NULL, ASCII_BACK_SLASH_STRING );
+
+						} // End of successfully expanded current sub-folder tree item
+						else
+						{
+							// Unable to expand current sub-folder tree item
+
+							// Force exit from loop
+							lpszCurrentSubFolder = NULL;
+
+						} // End of unable to expand current sub-folder tree item
+
+					} // End of successfully found current sub-folder tree item
+					else
+					{
+						// Unable to find current sub-folder tree item
+
+						// Force exit from loop
+						lpszCurrentSubFolder = NULL;
+
+					} // End of unable to find current sub-folder tree item
+
+				} // End of loop through all sub folders
+
+				// Ensure that current tree item is valid
+				if( htiCurrent )
+				{
+					// Current tree item is valid
+
+					// Select current tree item
+					::SendMessage( m_hWnd, TVM_SELECTITEM, ( WPARAM )TVGN_CARET, ( LPARAM )htiCurrent );
+
+					// Update return value
+					bResult = TRUE;
+
+				} // End of current tree item is valid
+
+				// Free string memory
+				delete [] lpszSubFolders;
+
+			} // End of successfully expanded drive tree item
+
+		} // End of successfully found drive tree item
+
+	} // End of successfully found end of drive
+
+	// Free string memory
+	delete [] lpszDrive;
+
+	return bResult;
+
+} // End of function FolderTreeViewWindow::SelectFolder
+
 /*
 FolderTreeViewWindow::
 {

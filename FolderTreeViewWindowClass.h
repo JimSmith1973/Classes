@@ -32,6 +32,10 @@ public:
 
 	BOOL Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint = TRUE );
 
+	BOOL SelectFolder();
+
+	BOOL SelectFolder( LPTSTR lpszFolderPath );
+
 protected:
 
 }; // End of class FolderTreeViewWindow
