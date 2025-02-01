@@ -50,7 +50,7 @@ int FileListViewWindow::AddFiles( LPCTSTR lpszFolderPath, LPCTSTR lpszFileFilter
 
 	// Find first item
 	hFind = FindFirstFile( lpszFullSearchPattern, &wfd );
-	
+
 	// Ensure that first item was found
 	if( hFind != INVALID_HANDLE_VALUE )
 	{
@@ -58,6 +58,7 @@ int FileListViewWindow::AddFiles( LPCTSTR lpszFolderPath, LPCTSTR lpszFileFilter
 		LVITEM lvItem;
 		int nItemCount;
 		int nWhichItem;
+		SYSTEMTIME stModified;
 
 		// Clear list view item structure
 		::ZeroMemory( &lvItem, sizeof( lvItem ) );
@@ -70,6 +71,9 @@ int FileListViewWindow::AddFiles( LPCTSTR lpszFolderPath, LPCTSTR lpszFileFilter
 		lvItem.iItem		= nItemCount;
 		lvItem.cchTextMax	= STRING_LENGTH;
 
+		// Allocate string memory
+		LPTSTR lpszModified = new char[ STRING_LENGTH ];
+
 		// Loop through all items
 		do
 		{
@@ -78,17 +82,34 @@ int FileListViewWindow::AddFiles( LPCTSTR lpszFolderPath, LPCTSTR lpszFileFilter
 			{
 				// Found item is a file
 
-				// Update list view item structure for file
+				// Update list view item structure for file name
 				lvItem.iSubItem		= FILE_LIST_VIEW_WINDOW_CLASS_NAME_COLUMN_ID;
 				lvItem.pszText		= wfd.cFileName;
 
 				// Add file to list view window
 				nWhichItem = ::SendMessage( m_hWnd, LVM_INSERTITEM, ( WPARAM )lvItem.iItem, ( LPARAM )&lvItem );
-				
+
 				// Ensure that file was added to list view window
 				if( nWhichItem >= 0 )
 				{
 					// Successfully added file to list view window
+
+					// Get modified time
+					if( FileTimeToSystemTime( ( &( wfd.ftLastWriteTime ) ), &stModified ) )
+					{
+						// Successfully got modified time
+
+						// Format modified text
+						wsprintf( lpszModified, FILE_LIST_VIEW_WINDOW_CLASS_MODIFIED_TEXT_FORMAT_STRING, stModified.wYear, stModified.wMonth, stModified.wDay, stModified.wHour, stModified.wMinute, stModified.wSecond );
+
+						// Update list view item structure for file
+						lvItem.iSubItem		= FILE_LIST_VIEW_WINDOW_CLASS_MODIFIED_COLUMN_ID;
+						lvItem.pszText		= lpszModified;
+
+						// Add file to list view window
+						::SendMessage( m_hWnd, LVM_SETITEM, ( WPARAM )lvItem.iItem, ( LPARAM )&lvItem );
+
+					} // End of successfully got modified time
 
 					// Update return value
 					nResult ++;
@@ -101,6 +122,9 @@ int FileListViewWindow::AddFiles( LPCTSTR lpszFolderPath, LPCTSTR lpszFileFilter
 
 		// Close file find
 		FindClose( hFind );
+
+		// Free string memory
+		delete [] lpszModified;
 
 	} // End of successfully found first item
 
@@ -185,31 +209,24 @@ BOOL FileListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSe
 		{
 			// A double click notification code
 
-			// See if selection has changed
-			if( ( lpNmListView->uNewState ^ lpNmListView->uOldState ) & LVIS_SELECTED )
+			// Allocate string memory
+			LPTSTR lpszItemPath = new char[ STRING_LENGTH + sizeof( char ) ];
+
+			// Get item path
+			if( GetItemPath( lpNmListView->iItem, lpszItemPath ) )
 			{
-				// Selection has changed
+				// Successfully got item path
 
-				// Allocate string memory
-				LPTSTR lpszItemPath = new char[ STRING_LENGTH + sizeof( char ) ];
+				// Call double click function
+				( *lpDoubleClickFunction )( lpszItemPath );
 
-				// Get item path
-				if( GetItemPath( lpNmListView->iItem, lpszItemPath ) )
-				{
-					// Successfully got item path
+				// Update return value
+				bResult = TRUE;
 
-					// Call double click function
-					( *lpDoubleClickFunction )( lpszItemPath );
+			} // End of successfully got item path
 
-					// Update return value
-					bResult = TRUE;
-
-				} // End of successfully got item path
-
-				// Free string memory
-				delete [] lpszItemPath;
-
-			} // End of selection has changed
+			// Free string memory
+			delete [] lpszItemPath;
 
 			// Break out of switch
 			break;
