@@ -6,7 +6,8 @@ File::File()
 {
 	// Initialise member variables
 	::ZeroMemory( &m_hFile, sizeof( m_hFile ) );
-	m_lpszFileText = NULL; 
+	m_lpszFileText = NULL;
+	m_dwFileSize = 0;
 
 } // End of function File::File
  
@@ -134,6 +135,7 @@ int File::DisplayText( HWND hWnd, LPCTSTR lpszCaption, UINT uType )
 
 } // End of function File::DisplayText
 
+
 DWORD File::GetSize( LPDWORD lpFileSizeHigh )
 {
 	// Get file size
@@ -145,13 +147,11 @@ BOOL File::Read()
 {
 	BOOL bResult = FALSE;
 
-	DWORD dwFileSize;
-
 	// Get file size
-	dwFileSize = ::GetFileSize( m_hFile, NULL );
+	m_dwFileSize = ::GetFileSize( m_hFile, NULL );
 
 	// Ensure that file size was got
-	if( dwFileSize != INVALID_FILE_SIZE )
+	if( m_dwFileSize != INVALID_FILE_SIZE )
 	{
 		// Successfully got file size
 
@@ -166,15 +166,15 @@ BOOL File::Read()
 		} // End of file text is valid
 
 		// Allocate string memory
-		m_lpszFileText = new char[ dwFileSize + sizeof( char ) ];
+		m_lpszFileText = new char[ m_dwFileSize + sizeof( char ) ];
 
 		// Read file text
-		if( ::ReadFile( m_hFile, m_lpszFileText, dwFileSize, NULL, NULL ) )
+		if( ::ReadFile( m_hFile, m_lpszFileText, m_dwFileSize, NULL, NULL ) )
 		{
 			// Successfully read file text
 
 			// Terminate file text
-			m_lpszFileText[ dwFileSize ] = ( char )NULL;
+			m_lpszFileText[ m_dwFileSize ] = ( char )NULL;
 
 			// Update return value
 			bResult = TRUE;

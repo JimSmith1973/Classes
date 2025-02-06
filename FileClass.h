@@ -48,5 +48,6 @@ public:
 protected:
 	HANDLE m_hFile;
 	LPTSTR m_lpszFileText;
+	DWORD m_dwFileSize;
 
 }; // End of class File

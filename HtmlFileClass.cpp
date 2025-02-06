@@ -103,7 +103,7 @@ BOOL HtmlFile::GetAttributeValue( LPCTSTR lpszTag, LPCTSTR lpszParentUrl, LPCTST
 			} // End of successfully found end of attribute value
 
 			// Free string memory
-			delete lpszRelativeAttributeValue;
+			delete [] lpszRelativeAttributeValue;
 
 		} // End of successfully found start of atttribute value
 
@@ -141,6 +141,86 @@ BOOL HtmlFile::GetTagName( LPCTSTR lpszTag, LPTSTR lpszTagName )
 	return bResult;
 
 } // End of function HtmlFile::GetTagName
+
+int HtmlFile::ProcessStrings( LPCTSTR lpszParentUrl, LPCTSTR lpszStringMustContain, BOOL( *lpStringFunction )( LPCTSTR lpszString ) )
+{
+	int nResult = 0;
+
+	LPTSTR lpszStartOfString;
+	LPTSTR lpszEndOfString;
+	DWORD dwStringLength;
+
+	// Allocate string memory
+	LPTSTR lpszString = new char[ STRING_LENGTH + sizeof( char ) ];
+
+	// Find start of first string
+	lpszStartOfString = strpbrk( m_lpszFileText, HTML_FILE_CLASS_STRING_SURROUND_CHARACTERS );
+
+	// Loop through all strings
+	while( lpszStartOfString )
+	{
+		// Find end of string
+		lpszEndOfString = strchr( ( lpszStartOfString + sizeof( char ) ), lpszStartOfString[ 0 ] );
+
+		// Ensure that end of string was found
+		if( lpszEndOfString )
+		{
+			// Successfully found end of string
+
+			// Calculate string length
+			dwStringLength = ( ( lpszEndOfString - lpszStartOfString ) - sizeof( char ) );
+
+			// Ensure that string is not too long
+			if( dwStringLength > STRING_LENGTH )
+			{
+				// String is too long
+
+				// Limit string length
+				dwStringLength = STRING_LENGTH;
+
+			} // End of string is too long
+
+			// Store string
+			lstrcpyn( lpszString, ( lpszStartOfString + sizeof( char ) ), ( dwStringLength + sizeof( char ) ) );
+
+			// See if string contains required text
+			if( strstr( lpszString, lpszStringMustContain ) )
+			{
+				// String contains required text
+
+				// Process string
+				if( ( *lpStringFunction )( lpszString ) )
+				{
+					// Successfully processed string
+
+					// Update return value
+					nResult ++;
+
+				} // End of successfully processed string
+
+			} // End of string contains required text
+
+			// Find start of next string
+			lpszStartOfString = strpbrk( ( lpszEndOfString + sizeof( char ) ), HTML_FILE_CLASS_STRING_SURROUND_CHARACTERS );
+
+		} // End of successfully found end of string
+		else
+		{
+			// Unable to find end of string
+
+			// Force exit from loop
+			lpszStartOfString = NULL;
+
+		} // End of unable to find end of string
+
+	}; // End of loop through all strings
+
+	// Free string memory
+	delete [] lpszString;
+
+	return nResult;
+
+} // End of function HtmlFile::ProcessStrings
 
 int HtmlFile::ProcessTags( LPCTSTR lpszParentUrl, void( *lpTagFunction )( LPCTSTR lpszParentUrl, LPCTSTR lpszTag ) )
 {

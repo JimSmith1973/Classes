@@ -41,13 +41,15 @@ public:
 
 	int AddFiles( LPCTSTR lpszFolderPath, LPCTSTR lpszFileFilter = ALL_FILES_FILTER );
 
+	int CALLBACK CompareProcedure( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort );
+
 	BOOL Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_TEXT, HMENU hMenu = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_MENU, DWORD dwExStyle = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE, DWORD dwStyle = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_STYLE, int nLeft = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_LEFT, int nTop = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_TOP, int nWidth = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_WIDTH, int nHeight = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_HEIGHT, LPVOID lpParam = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_LP_PARAM );
 
 	int GetItemPath( int nWhichItem, LPTSTR lpszItemPath );
 
 	int GetItemPath(LPTSTR lpszItemPath );
 
-	BOOL HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPCTSTR lpszItemPath ), void( *lpDoubleClickFunction )( LPCTSTR lpszItemPath ) );
+	BOOL HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPCTSTR lpszItemPath ), void( *lpDoubleClickFunction )( LPCTSTR lpszItemPath ), PFNLVCOMPARE lpCompareFunction );
 
 	BOOL Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint = TRUE );
 

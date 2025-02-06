@@ -30,9 +30,12 @@
 
 #define HTML_FILE_CLASS_START_OF_END_TAG_NAME_CHARACTER							'/'
 
+#define HTML_FILE_CLASS_STRING_SURROUND_CHARACTERS								"\"'"
+
 #define HTML_FILE_CLASS_UNKNOWN_TAG_TITLE										"Unknown"
 
 #define HTML_FILE_CLASS_PROCESS_TAGS_STATUS_MESSAGE_FORMAT_STRING				"%s (%d tags)"
+#define HTML_FILE_CLASS_PROCESS_STRINGS_STATUS_MESSAGE_FORMAT_STRING			"%s (%d items)"
 
 class HtmlFile : public File
 {
@@ -43,6 +46,8 @@ public:
 	BOOL GetAttributeValue( LPCTSTR lpszTag, LPCTSTR lpszParentUrl, LPCTSTR lpszAttributeName, LPTSTR lpszAttributeValue );
 
 	BOOL GetTagName( LPCTSTR lpszTag, LPTSTR lpszTagName );
+
+	int ProcessStrings( LPCTSTR lpszParentUrl, LPCTSTR lpszStringMustContain, BOOL( *lpStringFunction )( LPCTSTR lpszString ) );
 
 	int ProcessTags( LPCTSTR lpszParentUrl, void( *lpTagFunction )( LPCTSTR lpszParentUrl, LPCTSTR lpszTag ) );
 

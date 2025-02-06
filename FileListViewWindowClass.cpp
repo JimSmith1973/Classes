@@ -133,7 +133,32 @@ int FileListViewWindow::AddFiles( LPCTSTR lpszFolderPath, LPCTSTR lpszFileFilter
 
 	return nResult;
 
-} // End of function FileListViewWindow::AddSubFolders
+} // End of function FileListViewWindow::AddFiles
+
+int CALLBACK FileListViewWindow::CompareProcedure( LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort )
+{
+	int nResult = 0;
+
+	// Allocate string memory
+	LPTSTR lpszItemText1 = new char[ STRING_LENGTH + sizeof( char ) ];
+	LPTSTR lpszItemText2 = new char[ STRING_LENGTH + sizeof( char ) ];
+
+	// Get first item text
+	GetItemText( lParam1, lParamSort, lpszItemText1 );
+
+	// Get second item text
+	GetItemText( lParam2, lParamSort, lpszItemText2 );
+
+	// Compare item texts
+	nResult = lstrcmpi( lpszItemText1, lpszItemText2 );
+
+	// Free string memory
+	delete [] lpszItemText1;
+	delete [] lpszItemText2;
+
+	return nResult;
+
+} // End of function FileListViewWindow::CompareProcedure
 
 BOOL FileListViewWindow::FileListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, HMENU hMenu, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, LPVOID lpParam )
 {
@@ -193,7 +218,7 @@ int FileListViewWindow::GetItemPath(LPTSTR lpszItemPath )
 
 } // End of function FileListViewWindow::GetItemPath
 
-BOOL FileListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPCTSTR lpszItemPath ), void( *lpDoubleClickFunction )( LPCTSTR lpszItemPath ) )
+BOOL FileListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPCTSTR lpszItemPath ), void( *lpDoubleClickFunction )( LPCTSTR lpszItemPath ), PFNLVCOMPARE lpCompareFunction )
 {
 	BOOL bResult = FALSE;
 
@@ -205,41 +230,20 @@ BOOL FileListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSe
 	// Select notify message
 	switch( lpNmListView->hdr.code )
 	{
-		case NM_DBLCLK:
+		case LVN_COLUMNCLICK:
 		{
-			// A double click notification code
+			// A column click notify message
 
-			// Allocate string memory
-			LPTSTR lpszItemPath = new char[ STRING_LENGTH + sizeof( char ) ];
+			// Sort list view window
+			::SendMessage( m_hWnd, LVM_SORTITEMS, ( WPARAM )( lpNmListView->iSubItem ), ( LPARAM )lpCompareFunction );
 
-			// Get item path
-			if( GetItemPath( lpNmListView->iItem, lpszItemPath ) )
-			{
-				// Successfully got item path
-
-				// Call double click function
-				( *lpDoubleClickFunction )( lpszItemPath );
-
-				// Update return value
-				bResult = TRUE;
-
-			} // End of successfully got item path
-
-			// Free string memory
-			delete [] lpszItemPath;
+			// Update return value
+			bResult = TRUE;
 
 			// Break out of switch
 			break;
 
-		} // End of a double click notification code
-		case TVN_ITEMEXPANDING:
-		{
-			// An item expanding notify message
-
-			// Break out of switch
-			break;
-
-		} // End of an item expanding notify message
+		} // End of a column click notify message
 		case LVN_ITEMCHANGED:
 		{
 			// A list view window item changed notification code
@@ -274,6 +278,33 @@ BOOL FileListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSe
 			break;
 
 		} // End of a list view window item changed notification code
+		case NM_DBLCLK:
+		{
+			// A double click notification code
+
+			// Allocate string memory
+			LPTSTR lpszItemPath = new char[ STRING_LENGTH + sizeof( char ) ];
+
+			// Get item path
+			if( GetItemPath( lpNmListView->iItem, lpszItemPath ) )
+			{
+				// Successfully got item path
+
+				// Call double click function
+				( *lpDoubleClickFunction )( lpszItemPath );
+
+				// Update return value
+				bResult = TRUE;
+
+			} // End of successfully got item path
+
+			// Free string memory
+			delete [] lpszItemPath;
+
+			// Break out of switch
+			break;
+
+		} // End of a double click notification code
 
 	}; // End of selection for notify message
 
