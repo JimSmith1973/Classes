@@ -43,11 +43,13 @@ public:
 	HtmlFile();
 	~HtmlFile();
 
+	BOOL GetAbsoluteUrl( LPCTSTR lpszInitialUrl, LPCTSTR lpszParentUrl, LPTSTR lpszAbsoluteUrl );
+
 	BOOL GetAttributeValue( LPCTSTR lpszTag, LPCTSTR lpszParentUrl, LPCTSTR lpszAttributeName, LPTSTR lpszAttributeValue );
 
 	BOOL GetTagName( LPCTSTR lpszTag, LPTSTR lpszTagName );
 
-	int ProcessStrings( LPCTSTR lpszParentUrl, LPCTSTR lpszStringMustContain, BOOL( *lpStringFunction )( LPCTSTR lpszString ) );
+	int ProcessStrings( LPCTSTR lpszStringMustContain, LPCTSTR lpszExtra, BOOL( *lpStringFunction )( LPCTSTR lpszString, LPCTSTR lpszExtra ) );
 
 	int ProcessTags( LPCTSTR lpszParentUrl, void( *lpTagFunction )( LPCTSTR lpszParentUrl, LPCTSTR lpszTag ) );
 

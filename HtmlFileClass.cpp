@@ -10,6 +10,60 @@ HtmlFile::~HtmlFile()
 {
 } // End of function HtmlFile::~HtmlFile
 
+BOOL HtmlFile::GetAbsoluteUrl( LPCTSTR lpszInitialUrl, LPCTSTR lpszParentUrl, LPTSTR lpszAbsoluteUrl )
+{
+	BOOL bResult = FALSE;
+
+	// See if initial url is absolute
+	if( strstr( lpszInitialUrl, HTML_FILE_CLASS_ABSOLUTE_URL_IDENTIFIER ) )
+	{
+		// Initial url is absolute
+
+		// Copy initial url into absolute url
+		lstrcpy( lpszAbsoluteUrl, lpszInitialUrl );
+
+	} // End of initial url is absolute
+	else
+	{
+		// Initial url is not absolute
+
+		// Copy parent url into absolute url
+		lstrcpy( lpszAbsoluteUrl, lpszParentUrl );
+
+		// Ensure that absolute url ends with a forward slash
+		if( lpszAbsoluteUrl[ lstrlen( lpszAbsoluteUrl ) - sizeof( char ) ] != ASCII_FORWARD_SLASH_CHARACTER )
+		{
+			// Absolute url does not end with a forward slash
+
+			// Append a forward slash onto absolute url
+			lstrcat( lpszAbsoluteUrl, ASCII_FORWARD_SLASH_STRING );
+
+		} // End of absolute url does not end with a forward slash
+
+		// See if initial url begins with a forward slash
+		if( lpszInitialUrl[ 0 ] == ASCII_FORWARD_SLASH_CHARACTER )
+		{
+			// Initial url begins with a forward slash
+
+			// Append initial url (after forward slash) onto absolute url
+			lstrcat( lpszAbsoluteUrl, ( lpszInitialUrl + sizeof( char ) ) );
+
+		} // End of initial url begins with a forward slash
+		else
+		{
+			// Initial url does not begin with a forward slash
+
+			// Append initial url onto absolute url
+			lstrcat( lpszAbsoluteUrl, lpszInitialUrl );
+
+		} // End of initial url begins does not begin a forward slash
+
+	} // End of initial url is not absolute
+
+	return bResult;
+
+} // End of function HtmlFile::GetAbsoluteUrl
+
 BOOL HtmlFile::GetAttributeValue( LPCTSTR lpszTag, LPCTSTR lpszParentUrl, LPCTSTR lpszAttributeName, LPTSTR lpszAttributeValue )
 {
 	BOOL bResult = FALSE;
@@ -142,7 +196,7 @@ BOOL HtmlFile::GetTagName( LPCTSTR lpszTag, LPTSTR lpszTagName )
 
 } // End of function HtmlFile::GetTagName
 
-int HtmlFile::ProcessStrings( LPCTSTR lpszParentUrl, LPCTSTR lpszStringMustContain, BOOL( *lpStringFunction )( LPCTSTR lpszString ) )
+int HtmlFile::ProcessStrings( LPCTSTR lpszStringMustContain, LPCTSTR lpszExtra, BOOL( *lpStringFunction )( LPCTSTR lpszString, LPCTSTR lpszExtra ) )
 {
 	int nResult = 0;
 
@@ -189,7 +243,7 @@ int HtmlFile::ProcessStrings( LPCTSTR lpszParentUrl, LPCTSTR lpszStringMustConta
 				// String contains required text
 
 				// Process string
-				if( ( *lpStringFunction )( lpszString ) )
+				if( ( *lpStringFunction )( lpszString, lpszExtra ) )
 				{
 					// Successfully processed string
 
