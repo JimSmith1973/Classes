@@ -75,11 +75,21 @@ BOOL ArgumentList::GetArgument( int nWhichArgument, LPTSTR lpszArgument )
 		// Terminate argument
 		lpszArgument[ nSizeNeeded ] = ( char )NULL;
 
+		// Update return value
+		bResult = TRUE;
+
 	} // End of argument is valid
 
 	return bResult;
 
 } // End of function ArgumentList::GetArgument
+
+int ArgumentList::GetArgumentCount()
+{
+	// Get argument count
+	return m_nArgumentCount;
+
+} // End of function ArgumentList::GetArgumentCount
 
 int ArgumentList::ProcessArguments( void( *lpArgumentFunction )( LPCTSTR lpszArgument ) )
 {

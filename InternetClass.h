@@ -19,6 +19,8 @@
 #define INTERNET_CLASS_SUCCESSFULLY_DOWNLOADED_STATUS_MESSAGE_FORMAT_STRING		"Successfully downloaded %s to %s"
 #define INTERNET_CLASS_UNABLE_TO_DOWNLOAD_STATUS_MESSAGE_FORMAT_STRING			"Unable to download %s"
 
+#define INTERNET_CLASS_ILLEGAL_FILE_NAME_CHARACTERS								"#%&{}<>*?/$!@+`|="
+
 #define INTERNET_CLASS_UNABLE_TO_CONNECT_TO_INTERNET_ERROR_MESSAGE				"Unable to connect to internet"
 
 class Internet

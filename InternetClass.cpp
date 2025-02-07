@@ -105,6 +105,7 @@ BOOL Internet::DownloadFile( LPCTSTR lpszUrl, LPTSTR lpszLocalFilePath )
 		// Successfully got current folder into local file path
 		HINTERNET hInternetFile;
 		LPTSTR lpszLastForwardSlash;
+		LPTSTR lpszFirstIllegalCharacter;
 
 		// Allocate string memory
 		LPTSTR lpszShortUrl = new char[ STRING_LENGTH ];
@@ -150,6 +151,19 @@ BOOL Internet::DownloadFile( LPCTSTR lpszUrl, LPTSTR lpszLocalFilePath )
 			lstrcat( lpszLocalFilePath, lpszShortUrl );
 
 		} // End of unable to find last forward slash in url
+
+		// Find any illegal characters in local file path
+		lpszFirstIllegalCharacter = strpbrk( lpszLocalFilePath, INTERNET_CLASS_ILLEGAL_FILE_NAME_CHARACTERS );
+
+		// See if any illegal characters were found in local file path
+		if( lpszFirstIllegalCharacter )
+		{
+			// Illegal characters were found in local file path
+
+			// Terminate local file path at first illegal character
+			lpszFirstIllegalCharacter[ 0 ] = ( char )NULL;
+
+		} // End of illegal characters were found in local file path
 
 		// Open internet file
 		hInternetFile = InternetOpenUrl( m_hInternet, lpszShortUrl, NULL, 0, 0, 0 );
