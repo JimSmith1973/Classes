@@ -73,6 +73,47 @@ int ListViewWindow::AddItem( LPCTSTR lpszItemText )
 
 } // End of function ListViewWindow::AddItem
 
+int ListViewWindow::AddItemEx( LPCTSTR lpszItemText )
+{
+	int nResult;
+
+	LVITEM lvItem;
+
+	int nItemCount;
+
+	// Clear list view item structure
+	::ZeroMemory( &lvItem, sizeof( lvItem ) );
+
+	// Count items on list view window
+	nItemCount = ::SendMessage( m_hWnd, LVM_GETITEMCOUNT, ( WPARAM )NULL, ( LPARAM )NULL );
+
+	// Initialise list view item structure
+	lvItem.mask			= LVIF_TEXT;
+	lvItem.iItem		= nItemCount;
+	lvItem.iSubItem		= 0;
+	lvItem.pszText		= ( LPTSTR )lpszItemText;
+	lvItem.cchTextMax	= STRING_LENGTH;
+
+	// Add item to list view window
+	nResult = ::SendMessage( m_hWnd, LVM_INSERTITEM, ( WPARAM )nItemCount, ( LPARAM )&lvItem );
+
+	// Ensure that item was added to list view window
+	if( nResult >= 0 )
+	{
+		// Successfully added item to list view window
+
+		// Ensure that item is visible
+		::SendMessage( m_hWnd, LVM_ENSUREVISIBLE , ( WPARAM )nResult, ( LPARAM )FALSE );
+
+		// Update window
+		::UpdateWindow( m_hWnd );
+
+	} // End of successfully added item to list view window
+
+	return nResult;
+
+} // End of function ListViewWindow::AddItemEx
+
 int ListViewWindow::AutoSizeAllColumns()
 {
 	int nResult = 0;
@@ -164,7 +205,7 @@ int ListViewWindow::GetSelectedItem()
 
 } // End of function ListViewWindow::GetSelectedItem
 
-BOOL ListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPTSTR lpszItemText ), PFNLVCOMPARE lpCompareFunction )
+BOOL ListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPCTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPCTSTR lpszItemText ), PFNLVCOMPARE lpCompareFunction )
 {
 	BOOL bResult = FALSE;
 

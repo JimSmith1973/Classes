@@ -31,6 +31,8 @@ public:
 
 	int AddItem( LPCTSTR lpszItemText );
 
+	int AddItemEx( LPCTSTR lpszItemText );
+
 	int AutoSizeAllColumns();
 
 	BOOL Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText = LIST_VIEW_WINDOW_CLASS_DEFAULT_TEXT, HMENU hMenu = LIST_VIEW_WINDOW_CLASS_DEFAULT_MENU, DWORD dwExStyle = LIST_VIEW_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE, DWORD dwStyle = LIST_VIEW_WINDOW_CLASS_DEFAULT_STYLE, int nLeft = LIST_VIEW_WINDOW_CLASS_DEFAULT_LEFT, int nTop = LIST_VIEW_WINDOW_CLASS_DEFAULT_TOP, int nWidth = LIST_VIEW_WINDOW_CLASS_DEFAULT_WIDTH, int nHeight = LIST_VIEW_WINDOW_CLASS_DEFAULT_HEIGHT, LPVOID lpParam = LIST_VIEW_WINDOW_CLASS_DEFAULT_LP_PARAM );
@@ -41,7 +43,7 @@ public:
 
 	int GetSelectedItem();
 
-	BOOL HandleNotifyMessage( WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( LPTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPTSTR lpszItemText ), PFNLVCOMPARE lpCompareFunction );
+	BOOL HandleNotifyMessage( WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( LPCTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPCTSTR lpszItemText ), PFNLVCOMPARE lpCompareFunction );
 
 	BOOL Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint = TRUE );
 
