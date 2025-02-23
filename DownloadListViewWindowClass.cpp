@@ -95,6 +95,114 @@ BOOL DownloadListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTS
 
 } // End of function DownloadListViewWindow::Create
 
+BOOL DownloadListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPCTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPCTSTR lpszItemText ), PFNLVCOMPARE lpCompareFunction )
+{
+	BOOL bResult = FALSE;
+
+	LPNMLISTVIEW lpNmListView;
+
+	// Get list view notify message information
+	lpNmListView = ( LPNMLISTVIEW )lParam;
+
+	// Select list view window notification code
+	switch( lpNmListView->hdr.code )
+	{
+		case LVN_COLUMNCLICK:
+		{
+			// A column click notify message
+
+			// Sort list view window
+			::SendMessage( m_hWnd, LVM_SORTITEMSEX, ( WPARAM )( LPARAM )( lpNmListView->iSubItem ), ( LPARAM )lpCompareFunction );
+
+			// Break out of switch
+			break;
+
+		} // End of a column click notify message
+		case LVN_ITEMCHANGED:
+		{
+			// A list view window item changed notification code
+
+			// See if selection has changed
+			if( ( lpNmListView->uNewState ^ lpNmListView->uOldState ) & LVIS_SELECTED )
+			{
+				// Selection has changed
+
+				// Allocate string memory
+				LPTSTR lpszItemText = new char[ STRING_LENGTH + sizeof( char ) ];
+
+				// Get item text
+				if( GetItemText( lpNmListView->iItem, lpNmListView->iSubItem, lpszItemText ) )
+				{
+					// Successfully got item text
+
+					// Call selection changed function
+					( *lpSelectionChangedFunction )( lpszItemText );
+
+					// Update return value
+					bResult = TRUE;
+
+				} // End of successfully got item text
+
+				// Free string memory
+				delete [] lpszItemText;
+
+			} // End of selection has changed
+
+			// Break out of switch
+			break;
+
+		} // End of a list view window item changed notification code
+		case NM_DBLCLK:
+		{
+			// A double click notification code
+
+			// Ensure that an item is selected
+			if( lpNmListView->iItem >= 0 )
+			{
+				// An item is selected
+
+				// Allocate string memory
+				LPTSTR lpszItemText = new char[ STRING_LENGTH + sizeof( char ) ];
+
+				// Get item text
+				if( GetItemText( lpNmListView->iItem, DOWNLOAD_LIST_VIEW_WINDOW_CLASS_LOCAL_FILE_COLUMN_ID, lpszItemText ) )
+				{
+					// Successfully got item text
+
+					// Call double click function
+					( *lpDoubleClickFunction )( lpszItemText );
+
+					// Update return value
+					bResult = TRUE;
+
+				} // End of successfully got item text
+
+				// Free string memory
+				delete [] lpszItemText;
+
+			} // End of an item is selected
+
+			// Break out of switch
+			break;
+
+		} // End of a double click notification code
+		default:
+		{
+			// Default notification code
+
+			// No need to do anything here, just continue with default result
+
+			// Break out of switch
+			break;
+
+		} // End of default notification code
+
+	}; // End of selection for list view window notification code
+
+	return bResult;
+
+} // End of function DownloadListViewWindow::HandleNotifyMessage
+
 /*
 DownloadListViewWindow::
 {
