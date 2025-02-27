@@ -175,6 +175,29 @@ BOOL ListViewWindow::DeleteAllItems()
 
 } // End of function ListViewWindow::DeleteAllItems
 
+int ListViewWindow::Find( LPCTSTR lpszItemText, int nStartAt )
+{
+	int nResult;
+
+	LV_FINDINFO lvFindInfo;
+
+	// Clear list view find information structure
+	::ZeroMemory( &lvFindInfo, sizeof( lvFindInfo ) );
+
+	// Initialise list view find information structure
+	lvFindInfo.flags		= LVFI_STRING;
+	lvFindInfo.psz			= ( LPTSTR )lpszItemText;
+	//lvFindInfo.lParam		= NULL;
+	//lvFindInfo.pt			= NULL;
+	lvFindInfo.vkDirection	= VK_DOWN;
+
+	// Do the find
+	nResult = ::SendMessage( m_hWnd, LVM_FINDITEM, ( WPARAM )nStartAt, ( LPARAM )&lvFindInfo );
+
+	return nResult;
+
+} // End of function ListViewWindow::Find
+
 int ListViewWindow::GetItemText( int nWhichItem, int nWhichSubItem, LPTSTR lpszItemText )
 {
 	int nResult;

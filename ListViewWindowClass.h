@@ -39,6 +39,8 @@ public:
 
 	BOOL DeleteAllItems();
 
+	int Find( LPCTSTR lpszItemText, int nStartAt = -1 );
+
 	int GetItemText( int nWhichItem, int nWhichSubItem, LPTSTR lpszItemText );
 
 	int GetSelectedItem();
