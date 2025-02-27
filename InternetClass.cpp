@@ -165,6 +165,9 @@ BOOL Internet::DownloadFile( LPCTSTR lpszUrl, LPTSTR lpszLocalFilePath )
 
 		} // End of illegal characters were found in local file path
 
+		// Get next available file path
+		GetNextAvailableFilePath( lpszLocalFilePath );
+
 		// Open internet file
 		hInternetFile = InternetOpenUrl( m_hInternet, lpszShortUrl, NULL, 0, 0, 0 );
 
@@ -227,6 +230,111 @@ BOOL Internet::DownloadFile( LPCTSTR lpszUrl, LPTSTR lpszLocalFilePath )
 	return bResult;
 
 } // End of function Internet::DownloadFile
+
+BOOL Internet::GetNextAvailableFilePath( LPTSTR lpszFilePath )
+{
+	BOOL bResult = FALSE;
+
+	WIN32_FIND_DATA wfd;
+
+	HANDLE hFind;
+
+	// Attempt to find file
+	hFind = ::FindFirstFile( lpszFilePath, &wfd );
+
+	// See if file already exists
+	if( hFind == INVALID_HANDLE_VALUE )
+	{
+		// File does not already exist
+
+		// Keep file path as it is
+
+	} // End of file does not already exist
+	else
+	{
+		// File already exists
+		int nFileNumber = 1;
+		LPTSTR lpszLastFullStop;
+
+		// Allocate string memory
+		LPTSTR lpszFilePrefix		= new char[ STRING_LENGTH + sizeof( char ) ];
+		LPTSTR lpszFileSuffix		= new char[ STRING_LENGTH + sizeof( char ) ];
+		LPTSTR lpszNumberedFilePath	= new char[ STRING_LENGTH + sizeof( char ) ];
+
+		// Close file find
+		FindClose( hFind );
+
+		// Copy file path into file prefix
+		lstrcpy( lpszFilePrefix, lpszFilePath );
+
+		// Find last full stop in file prefix
+		lpszLastFullStop = strrchr( lpszFilePrefix, ASCII_FULL_STOP_CHARACTER );
+
+		// See if last full stop was found in file prefix
+		if( lpszLastFullStop )
+		{
+			// Successfully found last full stop in file prefix
+
+			// Copy text from last full stop into file suffix
+			lstrcpy( lpszFileSuffix, lpszLastFullStop );
+
+			// Terminate file prefix at last full stop
+			lpszLastFullStop[ 0 ] = ( char )NULL;
+
+		} // End of successfully found last full stop in file prefix
+		else
+		{
+			// Unable to find last full stop in file prefix
+
+			// Clear file suffix
+			lpszFileSuffix[ 0 ] = ( char )NULL;
+
+			// Keep file prefix as it is
+
+		} // End of unable to find last full stop in file prefix
+
+		// Find next free numbered file
+		do
+		{
+			// Format numbered file path
+			wsprintf( lpszNumberedFilePath, "%s (%d)%s", lpszFilePrefix, nFileNumber, lpszFileSuffix );
+
+			// Attempt to find numbered file
+			hFind = ::FindFirstFile( lpszNumberedFilePath, &wfd );
+
+			// See if numbered file already exists
+			if( hFind == INVALID_HANDLE_VALUE )
+			{
+				// Numbered file does not already exist
+
+				// Update file path
+				lstrcpy( lpszFilePath, lpszNumberedFilePath );
+
+				// Update return value
+				bResult = TRUE;
+
+			} // End of numbered file does not already exist
+			else
+			{
+				// Numbered file already exists
+
+				// Advance file number
+				nFileNumber ++;
+
+			} // End of numbered file already exists
+
+		} while( hFind != INVALID_HANDLE_VALUE ); // End fo loop to find next free numbered file
+
+		// Free string memory
+		delete [] lpszFilePrefix;
+		delete [] lpszFileSuffix;
+		delete [] lpszNumberedFilePath;
+
+	} // End of file already exists
+
+	return bResult;
+
+} // End of function Internet::GetNextAvailableFilePath
 
 /*
 Internet::

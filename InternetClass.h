@@ -43,6 +43,8 @@ public:
 
 	BOOL DownloadFile( LPCTSTR lpszUrl, LPTSTR lpszLocalFilePath );
 
+	BOOL GetNextAvailableFilePath( LPTSTR lpszFilePath );
+
 protected:
 	HINTERNET m_hInternet;
 
