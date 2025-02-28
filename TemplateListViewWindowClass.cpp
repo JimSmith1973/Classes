@@ -1,31 +1,31 @@
-// FileListViewWindowClass.cpp
+// TemplateListViewWindowClass.cpp
 
-#include "FileListViewWindowClass.h"
+#include "TemplateListViewWindowClass.h"
 
-FileListViewWindow::FileListViewWindow()
+TemplateListViewWindow::TemplateListViewWindow()
 {
 	// Initialise member variables
 	::ZeroMemory( &m_hWnd, sizeof( m_hWnd ) );
 
-} // End of function FileListViewWindow::FileListViewWindow
+} // End of function TemplateListViewWindow::TemplateListViewWindow
  
-FileListViewWindow::~FileListViewWindow()
+TemplateListViewWindow::~TemplateListViewWindow()
 {
 	// Clear member variables
 	::ZeroMemory( &m_hWnd, sizeof( m_hWnd ) );
 
-} // End of function FileListViewWindow::~FileListViewWindow
+} // End of function TemplateListViewWindow::~TemplateListViewWindow
 
-FileListViewWindow& FileListViewWindow::operator = ( HWND hWnd )
+TemplateListViewWindow& TemplateListViewWindow::operator = ( HWND hWnd )
 {
 	// Update member variables
 	m_hWnd = hWnd;
 
 	return *this;
 
-} // End of function FileListViewWindow::operator =
+} // End of function TemplateListViewWindow::operator =
 
-BOOL FileListViewWindow::operator == ( HWND hWnd )
+BOOL TemplateListViewWindow::operator == ( HWND hWnd )
 {
 	BOOL bResult = FALSE;
 
@@ -41,9 +41,9 @@ BOOL FileListViewWindow::operator == ( HWND hWnd )
 
 	return bResult;
 
-} // End of function FileListViewWindow::operator ==
+} // End of function TemplateListViewWindow::operator ==
 
-BOOL FileListViewWindow::operator != ( HWND hWnd )
+BOOL TemplateListViewWindow::operator != ( HWND hWnd )
 {
 	BOOL bResult = FALSE;
 
@@ -59,15 +59,15 @@ BOOL FileListViewWindow::operator != ( HWND hWnd )
 
 	return bResult;
 
-} // End of function FileListViewWindow::operator !=
+} // End of function TemplateListViewWindow::operator !=
 
-FileListViewWindow::operator HWND()
+TemplateListViewWindow::operator HWND()
 {
 	return m_hWnd;
 
-} // End of function FileListViewWindow::operator HWND()
+} // End of function TemplateListViewWindow::operator HWND()
 
-BOOL FileListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, HMENU hMenu, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, LPVOID lpParam )
+BOOL TemplateListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText, HMENU hMenu, DWORD dwExStyle, DWORD dwStyle, int nLeft, int nTop, int nWidth, int nHeight, LPVOID lpParam )
 {
 	BOOL bResult = FALSE;
 
@@ -76,10 +76,10 @@ BOOL FileListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR l
 	{
 		// Successfully created window
 		int nWhichColumn;
-		LPCTSTR lpszColumnTitles [] = FILE_LIST_VIEW_WINDOW_CLASS_CLASS_COLUMN_TITLES;
+		LPCTSTR lpszColumnTitles [] = TEMPLATE_LIST_VIEW_WINDOW_CLASS_CLASS_COLUMN_TITLES;
 
 		// Add columns to window
-		for( nWhichColumn = 0; nWhichColumn < FILE_LIST_VIEW_WINDOW_CLASS_NUMBER_OF_COLUMNS; nWhichColumn ++ )
+		for( nWhichColumn = 0; nWhichColumn < TEMPLATE_LIST_VIEW_WINDOW_CLASS_NUMBER_OF_COLUMNS; nWhichColumn ++ )
 		{
 			// Add column to window
 			AddColumn( lpszColumnTitles[ nWhichColumn ] );
@@ -93,9 +93,9 @@ BOOL FileListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR l
 
 	return bResult;
 
-} // End of function FileListViewWindow::Create
+} // End of function TemplateListViewWindow::Create
 
-BOOL FileListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPCTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPCTSTR lpszItemText ), PFNLVCOMPARE lpCompareFunction )
+BOOL TemplateListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSelectionChangedFunction )( LPCTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPCTSTR lpszItemText ), PFNLVCOMPARE lpCompareFunction )
 {
 	BOOL bResult = FALSE;
 
@@ -165,7 +165,7 @@ BOOL FileListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSe
 				LPTSTR lpszItemText = new char[ STRING_LENGTH + sizeof( char ) ];
 
 				// Get item text
-				if( GetItemText( lpNmListView->iItem, FILE_LIST_VIEW_WINDOW_CLASS_NAME_COLUMN_ID, lpszItemText ) )
+				if( GetItemText( lpNmListView->iItem, TEMPLATE_LIST_VIEW_WINDOW_CLASS_LOCAL_FILE_COLUMN_ID, lpszItemText ) )
 				{
 					// Successfully got item text
 
@@ -201,10 +201,10 @@ BOOL FileListViewWindow::HandleNotifyMessage( WPARAM, LPARAM lParam, void( *lpSe
 
 	return bResult;
 
-} // End of function FileListViewWindow::HandleNotifyMessage
+} // End of function TemplateListViewWindow::HandleNotifyMessage
 
 /*
-FileListViewWindow::
+TemplateListViewWindow::
 {
-} // End of function FileListViewWindow::
+} // End of function TemplateListViewWindow::
 */
