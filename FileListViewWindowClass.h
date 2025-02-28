@@ -21,6 +21,9 @@
 #define FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_LP_PARAM							NULL
 #define FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_COLUMN_WIDTH						100
 
+#define FILE_LIST_VIEW_WINDOW_CLASS_ADD_FILES_STATUS_MESSAGE_FORMAT_STRING		"%s (%d files)"
+#define FILE_LIST_VIEW_WINDOW_CLASS_MODIFIED_TEXT_FORMAT_STRING					"%04d/%02d/%02d %02d:%02d:%02d"
+
 #define FILE_LIST_VIEW_WINDOW_CLASS_CLASS_COLUMN_TITLES							{ "Name", "Modified" }
 
 typedef enum
@@ -46,10 +49,17 @@ public:
 
 	operator HWND();
 
+	int AddFiles( LPCTSTR lpszFolderPath, LPCTSTR lpszFileFilter );
+
 	BOOL Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszWindowText = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_TEXT, HMENU hMenu = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_MENU, DWORD dwExStyle = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_EXTENDED_STYLE, DWORD dwStyle = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_STYLE, int nLeft = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_LEFT, int nTop = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_TOP, int nWidth = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_WIDTH, int nHeight = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_HEIGHT, LPVOID lpParam = FILE_LIST_VIEW_WINDOW_CLASS_DEFAULT_LP_PARAM );
+
+	int GetItemPath( int nWhichItem, LPTSTR lpszItemPath );
 
 	BOOL HandleNotifyMessage( WPARAM wParam, LPARAM lParam, void( *lpSelectionChangedFunction )( LPCTSTR lpszItemText ), void( *lpDoubleClickFunction )( LPCTSTR lpszItemText ), PFNLVCOMPARE lpCompareFunction );
 
+	int Populate( LPCTSTR lpszFolderPath, LPCTSTR lpszFileFilter );
+
 protected:
+	LPTSTR m_lpszParentFolderPath;
 
 }; // End of class FileListViewWindow
