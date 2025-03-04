@@ -175,6 +175,13 @@ BOOL TreeViewWindow::DeleteItem( HTREEITEM htiCurrent )
 
 } // End of function TreeViewWindow::DeleteItem
 
+BOOL TreeViewWindow::ExpandItem( HTREEITEM htiCurrent, UINT uCode )
+{
+	// Expand item
+	return ::SendMessage( m_hWnd, TVM_EXPAND, ( WPARAM )uCode, ( LPARAM )htiCurrent );
+
+} // End of function TreeViewWindow::DeleteItem
+
 HTREEITEM TreeViewWindow::FindItem( LPCTSTR lpszRequiredItemText, HTREEITEM htiParent )
 {
 	HTREEITEM htiResult = NULL;
@@ -557,6 +564,109 @@ HTREEITEM TreeViewWindow::InsertItem( LPCTSTR lpszItemText, LPCTSTR lpszParentIt
 
 } // End of function TreeViewWindow::InsertItem
 
+int TreeViewWindow::Load( LPCTSTR lpszFilePath, HTREEITEM htiParent, HTREEITEM htiInsertAfter )
+{
+	int nResult = 0;
+
+	HANDLE hFile;
+
+	// Open file
+	hFile = ::CreateFile( lpszFilePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL );
+
+	// Ensure that file was opened
+	if( hFile != INVALID_HANDLE_VALUE )
+	{
+		// Successfully opened file
+		DWORD dwFileSize;
+
+		// Get file size
+		dwFileSize = ::GetFileSize( hFile, NULL );
+
+		// Ensure that file size was got
+		if( dwFileSize != INVALID_FILE_SIZE )
+		{
+			// Successfully got file size
+
+			// Allocate string memory
+			LPTSTR lpszFileText = new char[ dwFileSize + sizeof( char ) ];
+
+			// Read file text
+			if( ::ReadFile( hFile, lpszFileText, dwFileSize, NULL, NULL ) )
+			{
+				// Successfully read file text
+				LPTSTR lpszItemText;
+				HTREEITEM htiItem;
+
+				TVINSERTSTRUCT tvInsert;
+
+				// Clear tree view insert structure
+				::ZeroMemory( &tvInsert, sizeof( tvInsert ) );
+
+				// Initialise tree view insert structure
+				tvInsert.item.mask		= TVIF_TEXT;
+				tvInsert.hInsertAfter	= htiInsertAfter;
+
+				// Terminate file text
+				lpszFileText[ dwFileSize ] = ( char )NULL;
+
+				// Get first item text
+				lpszItemText = strtok( lpszFileText, NEW_LINE_TEXT );
+
+				// Loop through all items
+				while( lpszItemText )
+				{
+					// Update tree view insert structure for item
+					tvInsert.item.pszText	= ( LPTSTR )lpszItemText;
+					tvInsert.hParent		= htiParent;
+
+					// Insert item
+					htiItem = ( HTREEITEM )::SendMessage( m_hWnd, TVM_INSERTITEM, ( WPARAM )0, ( LPARAM )&tvInsert );
+
+					// Ensure that item was inserted
+					if( htiItem )
+					{
+						// Successfully inserted item
+
+						// Update tree view insert structure for dummy sub-item
+						tvInsert.hParent		= htiItem;
+
+						// Insert dummy sub-item
+						htiItem = ( HTREEITEM )::SendMessage( m_hWnd, TVM_INSERTITEM, ( WPARAM )0, ( LPARAM )&tvInsert );
+
+						// Update return value
+						nResult ++;
+
+						// Get next item text
+						lpszItemText = strtok( NULL, NEW_LINE_TEXT );
+
+					} // End of successfully inserted item
+					else
+					{
+						// Unable to insert item
+
+						// Force exit from loop
+						lpszItemText = NULL;
+
+					} // End of unable to insert item
+
+				}; // End of loop through all items
+
+			} // End of successfully read file text
+
+			// Free string memory
+			delete [] lpszFileText;
+
+		} // End of successfully got file size
+
+		// Close file
+		CloseHandle( hFile );
+
+	} // End of successfully opened file
+
+	return nResult;
+
+} // End of function TreeViewWindow::Load
+
 BOOL TreeViewWindow::Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint )
 {
 	BOOL bResult = FALSE;
@@ -574,6 +684,98 @@ BOOL TreeViewWindow::Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bR
 	return bResult;
 
 } // End of function TreeViewWindow::Move
+
+int TreeViewWindow::Save( LPCTSTR lpszFilePath, HTREEITEM htiParent )
+{
+	int nResult = 0;
+
+	HANDLE hFile;
+
+	// Create file
+	hFile = ::CreateFile( lpszFilePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
+
+	// Ensure that file was opened
+	if( hFile != INVALID_HANDLE_VALUE )
+	{
+		// Successfully opened file
+		TVITEM tvItem;
+
+		// Allocate string memory
+		LPTSTR lpszItemText = new char[ STRING_LENGTH + sizeof( char ) ];
+
+		// Clear tree view item structure
+		::ZeroMemory( &tvItem, sizeof( tvItem ) );
+
+		// Initialise tree view item structure
+		tvItem.mask			= TVIF_TEXT;
+		tvItem.pszText		= lpszItemText;
+		tvItem.cchTextMax	= STRING_LENGTH;
+
+		// Get first child item
+		tvItem.hItem = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_CHILD, ( LPARAM )htiParent );
+
+		// Loop through all child items
+		while( tvItem.hItem )
+		{
+			// Get item text
+			if( ::SendMessage( m_hWnd, TVM_GETITEM, ( WPARAM )0, ( LPARAM )&tvItem ) )
+			{
+				// Successfully got item text
+
+				// Write item text to file
+				if( WriteFile( hFile, lpszItemText, lstrlen( lpszItemText ), NULL, NULL ) )
+				{
+					// Successfully wrote item text to file
+
+					// Write new line text to file
+					WriteFile( hFile, NEW_LINE_TEXT, lstrlen( NEW_LINE_TEXT ), NULL, NULL );
+
+					// Update return value
+					nResult ++;
+
+					// Get next child item
+					tvItem.hItem = ( HTREEITEM )::SendMessage( m_hWnd, TVM_GETNEXTITEM, ( WPARAM )TVGN_NEXT, ( LPARAM )tvItem.hItem );
+
+				} // End of successfully wrote item text to file
+				else
+				{
+					// Unable to write item text to file
+
+					// Force exit from loop
+					tvItem.hItem = NULL;
+
+				} // End of unable to write item text to file
+
+			} // End of successfully got item text
+			else
+			{
+				// Unable to get item text
+
+				// Force exit from loop
+				tvItem.hItem = NULL;
+
+			} // End of unable to get item text
+
+		}; // End of loop through all child items
+
+		// Free string memory
+		delete [] lpszItemText;
+
+		// Close file
+		CloseHandle( hFile );
+
+	} // End of successfully opened file
+
+	return nResult;
+
+} // End of function TreeViewWindow::Save
+
+BOOL TreeViewWindow::SelectItem( HTREEITEM htiCurrent )
+{
+	// Get selected item
+	return ::SendMessage( m_hWnd, TVM_SELECTITEM, ( WPARAM )TVGN_CARET, ( LPARAM )htiCurrent );
+
+} // End of function TreeViewWindow::SelectItem
 
 /*
 TreeViewWindow::

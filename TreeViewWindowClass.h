@@ -42,6 +42,8 @@ public:
 
 	BOOL DeleteItem( HTREEITEM htiCurrent );
 
+	BOOL ExpandItem( HTREEITEM htiCurrent, UINT uCode = TVE_EXPAND );
+
 	HTREEITEM FindItem( LPCTSTR lpszRequiredItemText, HTREEITEM htiParent = TVI_ROOT );
 
 	BOOL GetItemPath( HTREEITEM htiCurrent, LPTSTR lpszItemPath, DWORD dwMaximumPathLength = STRING_LENGTH );
@@ -58,7 +60,13 @@ public:
 
 	HTREEITEM InsertItem( LPCTSTR lpszItemText, LPCTSTR lpszParentItemText, HTREEITEM htiInsertAfter = TVI_SORT );
 
+	int Load( LPCTSTR lpszFilePath, HTREEITEM htiParent = TVI_ROOT, HTREEITEM htiInsertAfter = TVI_SORT );
+
 	BOOL Move( int nLeft, int nTop, int nWidth, int nHeight, BOOL bRepaint = TRUE );
+
+	int Save( LPCTSTR lpszFilePath, HTREEITEM htiParent = TVI_ROOT );
+
+	BOOL SelectItem( HTREEITEM htiCurrent );
 
 protected:
 
