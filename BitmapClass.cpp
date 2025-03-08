@@ -74,6 +74,110 @@ Bitmap::operator HBITMAP()
 
 } // End of function Bitmap::operator HBITMAP()
 
+BOOL Bitmap::Center( HWND hWnd )
+{
+	BOOL bResult = FALSE;
+
+	RECT rcClient;
+
+	// Get client size
+	if( GetClientRect( hWnd, &rcClient ) )
+	{
+		// Successfully got client size
+		PAINTSTRUCT ps;
+		HDC hdcWindow;
+		HDC hdcBitmap;
+		HBITMAP hbmOld;
+		int nMaximumWidth;
+		int nMaximumHeight;
+		int nLeft;
+		int nTop;
+
+		// Calculate maximum size
+		nMaximumWidth	= ( rcClient.right - rcClient.left );
+		nMaximumHeight	= ( rcClient.bottom - rcClient.top );
+
+		// Begin painting
+		hdcWindow = BeginPaint( hWnd, &ps );
+
+		// Create bitmap dc
+		hdcBitmap = CreateCompatibleDC( hdcWindow );
+
+		// Copy bitmap into dc
+		hbmOld = ( HBITMAP )SelectObject( hdcBitmap, m_hBitmap );
+		
+		// See if bitmap will fit onto window
+		if( ( m_nWidth <= nMaximumWidth ) && ( m_nHeight <= nMaximumHeight ) )
+		{
+			// Bitmap will fit onto window
+
+			// Calculate image position
+			nLeft	= ( ( nMaximumWidth - m_nWidth ) / 2 );
+			nTop	= ( ( nMaximumHeight - m_nHeight ) / 2 );
+
+			// Paint bitmap onto window
+			BitBlt( hdcWindow, nLeft, nTop, m_nWidth, m_nHeight, hdcBitmap, 0, 0, SRCCOPY );
+
+		} // End of bitmap will fit onto window
+		else
+		{
+			// Bitmap will not fit onto window
+			float fHorizontalScale;
+			float fVerticalScale;
+			int nDisplayWidth;
+			int nDisplayHeight;
+
+			// Calculate scales
+			fHorizontalScale	= ( ( ( float )nMaximumWidth ) / ( ( float ) m_nWidth ) );
+			fVerticalScale		= ( ( ( float )nMaximumHeight ) / ( ( float ) m_nHeight ) );
+
+			// See if horizontal scale is less than vartical scale
+			if( fHorizontalScale < fVerticalScale )
+			{
+				// Horizontal scale is less than vartical scale
+
+				// Use horizontal scale to calculate display size
+				nDisplayWidth	= ( int )( ( ( float ) m_nWidth ) * fHorizontalScale );
+				nDisplayHeight	= ( int )( ( ( float ) m_nHeight ) * fHorizontalScale );
+
+			} // End of horizontal scale is less than vartical scale
+			else
+			{
+				// Horizontal scale is greater than vartical scale
+
+				// Use vertical scale to calculate display size
+				nDisplayWidth	= ( int )( ( ( float ) m_nWidth ) * fVerticalScale );
+				nDisplayHeight	= ( int )( ( ( float ) m_nHeight ) * fVerticalScale );
+
+			} // End of horizontal scale is greater than vartical scale
+
+			// Calculate image position
+			nLeft	= ( ( nMaximumWidth - nDisplayWidth ) / 2 );
+			nTop	= ( ( nMaximumHeight - nDisplayHeight ) / 2 );
+
+			// Set stretch blt mode
+			SetStretchBltMode( hdcWindow, COLORONCOLOR );
+
+			// Stretch bitmap onto window
+			StretchBlt( hdcWindow, nLeft, nTop, nDisplayWidth, nDisplayHeight, hdcBitmap, 0, 0, m_nWidth, m_nHeight, SRCCOPY );
+
+		} // End of bitmap will not fit onto window
+
+		// Remove bitmap from dc
+		SelectObject( hdcBitmap, hbmOld );
+
+		// Delete bitmap dc
+		DeleteDC( hdcBitmap );
+
+		// End painting
+		EndPaint( hWnd, &ps );
+
+	} // End of successfully got client size
+
+	return bResult;
+
+} // End of function Bitmap::Center
+
 BOOL Bitmap::Create( int nWidth, int nHeight, UINT uPlanes, UINT uBitCount, const VOID *lpBits )
 {
 	BOOL bResult = FALSE;
@@ -157,7 +261,7 @@ BOOL Bitmap::Load( LPCTSTR lpszFileName )
 
 			// Allocate global memory
 			hGlobal = ::GlobalAlloc( GPTR, dwFileSize );
-			
+
 			// Ensure that global memory was allocated
 			if( hGlobal )
 			{

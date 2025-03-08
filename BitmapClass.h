@@ -26,6 +26,8 @@ public:
 
 	operator HBITMAP();
 
+	BOOL Center( HWND hWnd );
+
 	BOOL Create( int nWidth, int nHeight, UINT uPlanes, UINT uBitCount, const VOID *lpBits );
 
 	BOOL CreateCompatible( HDC hdc, int nWidth, int nHeight );
