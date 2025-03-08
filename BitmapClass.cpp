@@ -131,6 +131,109 @@ BOOL Bitmap::CreateCompatible( HWND hWnd, int nWidth, int nHeight )
 
 } // End of function Bitmap::CreateCompatible
 
+BOOL Bitmap::Load( LPCTSTR lpszFileName )
+{
+	BOOL bResult = FALSE;
+
+	HANDLE hFile;
+
+	// Open file
+	hFile = ::CreateFile( lpszFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL );
+
+	// Ensure that file was opened
+	if( hFile != INVALID_HANDLE_VALUE )
+	{
+		// Successfully opened file
+		DWORD dwFileSize;
+
+		// Get file size
+		dwFileSize = ::GetFileSize( hFile, NULL );
+
+		// Ensure that file size was got
+		if( dwFileSize != INVALID_FILE_SIZE )
+		{
+			// Successfully got file size
+			HGLOBAL hGlobal;
+
+			// Allocate global memory
+			hGlobal = ::GlobalAlloc( GPTR, dwFileSize );
+			
+			// Ensure that global memory was allocated
+			if( hGlobal )
+			{
+				// Successfully allocated global memory
+				LPVOID lpGlobal;
+
+				// Get pointer to global memory
+				lpGlobal = ( LPVOID )hGlobal;
+
+				// Read data from file
+				if( ::ReadFile( hFile, lpGlobal, dwFileSize, NULL, NULL ) )
+				{
+					// Successfully read data from file
+					IStream *lpStream;
+
+					// Create stream
+					::CreateStreamOnHGlobal( hGlobal,false,&lpStream );
+
+					// Ensure that stream was created
+					if( lpStream )
+					{
+						// Successfully created stream
+						IPicture *lpPicture;
+
+						// Load picture
+						::OleLoadPicture( lpStream, 0, false, IID_IPicture, ( LPVOID * )&lpPicture );
+
+						// Ensure that picture was loaded
+						if( lpPicture )
+						{
+							// Successfully loaded picture
+							HBITMAP hBitmapTemporary = NULL;
+
+							// Copy picture into temporary bitmap handle
+							lpPicture->get_Handle( ( unsigned int * )&hBitmapTemporary );
+
+							// Copy from tempory bitmap handle into member bitmap
+							m_hBitmap = ( HBITMAP )CopyImage( hBitmapTemporary, IMAGE_BITMAP, 0, 0, LR_COPYRETURNORG );
+
+							// Note that the temporary bitmap will be destroyed as soon as the picture is released, so
+							// we can't just copy straight into the member bitmap
+
+							// Update size values
+							UpdateSizeValues();
+
+							// Release picture
+							lpPicture->Release();
+
+							// Update return value
+							bResult = TRUE;
+
+						} // End of successfully loaded picture
+
+					// Release stream
+						lpStream->Release();
+
+					} // End of successfully created stream
+
+				} // End of successfully read data from file
+
+				// Free global memory
+				GlobalFree( hGlobal );
+
+			} // End of successfully allocated global memory
+
+		} // End of successfully got file size
+
+		// Close file
+		CloseHandle( hFile );
+
+	} // End of successfully opened file
+
+	return bResult;
+
+} // End of function Bitmap::Load
+
 BOOL Bitmap::Paint( HWND hWnd, int nLeft, int nTop )
 {
 	BOOL bResult = FALSE;
