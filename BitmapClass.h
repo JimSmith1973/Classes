@@ -36,6 +36,10 @@ public:
 
 	BOOL Paint( HWND hWnd, int nLeft, int nTop );
 
+	BOOL Stretch( HWND hWnd, int nLeft, int nTop );
+
+	BOOL Stretch( HWND hWnd, int nLeft, int nTop, int nMaximumWidth, int nMaximumHeight );
+
 private:
 	BOOL UpdateSizeValues();
 

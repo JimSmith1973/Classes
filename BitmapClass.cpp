@@ -268,6 +268,69 @@ BOOL Bitmap::Paint( HWND hWnd, int nLeft, int nTop )
 
 } // End of function Bitmap::Paint
 
+BOOL Bitmap::Stretch( HWND hWnd, int nLeft, int nTop )
+{
+	BOOL bResult = FALSE;
+
+	RECT rcClient;
+
+	// Get client size
+	if( GetClientRect( hWnd, &rcClient ) )
+	{
+		// Successfully got client size
+		int nMaximumWidth;
+		int nMaximumHeight;
+
+		// Calculate maximum size
+		nMaximumWidth	= ( rcClient.right - rcClient.left );
+		nMaximumHeight	= ( rcClient.bottom - rcClient.top );
+
+		// Stretch bitmap onto window
+		bResult = Stretch( hWnd, nLeft, nTop, nMaximumWidth, nMaximumHeight );
+
+	} // End of successfully got client size
+
+	return bResult;
+
+} // End of function Bitmap::Stretch
+
+BOOL Bitmap::Stretch( HWND hWnd, int nLeft, int nTop, int nMaximumWidth, int nMaximumHeight )
+{
+	BOOL bResult = FALSE;
+
+	PAINTSTRUCT ps;
+	HDC hdcWindow;
+	HDC hdcBitmap;
+	HBITMAP hbmOld;
+
+	// Begin painting
+	hdcWindow = BeginPaint( hWnd, &ps );
+
+	// Create bitmap dc
+	hdcBitmap = CreateCompatibleDC( hdcWindow );
+
+	// Copy bitmap into dc
+	hbmOld = ( HBITMAP )SelectObject( hdcBitmap, m_hBitmap );
+
+	// Set stretch blt mode
+	SetStretchBltMode( hdcWindow, COLORONCOLOR );
+
+	// Stretch bitmap onto window
+	StretchBlt( hdcWindow, nLeft, nTop, nMaximumWidth, nMaximumHeight, hdcBitmap, 0, 0, m_nWidth, m_nHeight, SRCCOPY );
+
+	// Remove bitmap from dc
+	SelectObject( hdcBitmap, hbmOld );
+
+	// Delete bitmap dc
+	DeleteDC( hdcBitmap );
+
+	// End painting
+	EndPaint( hWnd, &ps );
+
+	return bResult;
+
+} // End of function Bitmap::Stretch
+
 BOOL Bitmap::UpdateSizeValues()
 {
 	BOOL bResult = FALSE;
