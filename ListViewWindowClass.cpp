@@ -157,7 +157,7 @@ BOOL ListViewWindow::Create( HWND hWndParent, HINSTANCE hInstance, LPCTSTR lpszW
 		// Successfully created window
 
 		// Set extended list view style
-		::SendMessage( m_hWnd, LVM_SETEXTENDEDLISTVIEWSTYLE, ( WPARAM )0, ( LPARAM )LVS_EX_FULLROWSELECT );
+		::SendMessage( m_hWnd, LVM_SETEXTENDEDLISTVIEWSTYLE, ( WPARAM )0, ( LPARAM )dwExStyle );
 
 		// Update return value
 		bResult = TRUE;
